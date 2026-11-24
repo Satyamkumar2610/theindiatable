@@ -20,10 +20,12 @@ void main(){
   float rnd=noise(gl_FragCoord.xy);
   vec2 uv=vUv;uv.x*=uRes.x/uRes.y;
   vec2 tex=rot(uv*.9,.35)*.9;
-  float t=.35*uTime;
+  float t=.2*uTime;
   tex.y+=.03*sin(8.*tex.x-t);
   float pat=.6+.4*sin(5.*(tex.x+tex.y+cos(3.*tex.x+5.*tex.y)+.02*t)+sin(20.*(tex.x+tex.y-.1*t)));
-  vec3 col=mix(uA,uB,pat)-rnd/40.;
+  vec3 col=mix(uA,uB,pow(pat,1.6))-rnd/48.;
+  vec2 v=vUv-.5;v.x*=.8;
+  col*=mix(.55,1.,smoothstep(.75,.15,length(v)));
   gl_FragColor=vec4(col,1.);
 }`;
 
@@ -71,7 +73,11 @@ export default function Silk({ className, active = true }: { className?: string;
     gl.uniform3fv(gl.getUniformLocation(prog, "uA"), hex(tokens.secondary));
     gl.uniform3fv(gl.getUniformLocation(prog, "uB"), hex(tokens.primaryRaised));
 
-    const scale = 0.5; // half resolution: it is a soft field, not detail
+    // A soft field, not detail: half resolution on desktop, lower on touch devices, 30fps there.
+    const touch = window.matchMedia("(hover: none)").matches;
+    const scale = touch ? 0.35 : 0.5;
+    const minFrame = touch ? 1000 / 30 : 0;
+    let lastFrame = 0;
     const resize = () => {
       canvas.width = Math.max(1, Math.round(canvas.clientWidth * scale));
       canvas.height = Math.max(1, Math.round(canvas.clientHeight * scale));
@@ -86,9 +92,11 @@ export default function Silk({ className, active = true }: { className?: string;
     let visible = false;
     const start = performance.now();
     const frame = (now: number) => {
+      raf = requestAnimationFrame(frame);
+      if (now - lastFrame < minFrame) return;
+      lastFrame = now;
       gl.uniform1f(uTime, (now - start) / 1000);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
-      raf = requestAnimationFrame(frame);
     };
     const play = () => {
       if (!raf && visible && activeRef.current && !document.hidden) raf = requestAnimationFrame(frame);

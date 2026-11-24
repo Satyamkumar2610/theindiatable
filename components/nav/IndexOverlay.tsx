@@ -154,16 +154,19 @@ export function IndexOverlay({
           <ol className="flex flex-col">
             {stages.map((s) => (
               <li key={s.id} className="overflow-hidden border-b border-hairline first:border-t">
-                <button
-                  type="button"
-                  onClick={() => go(s.id)}
+                <a
+                  href={`/#${s.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    go(s.id);
+                  }}
                   className="item group flex w-full items-baseline gap-5 py-3 text-left md:gap-8 md:py-3.5"
                 >
                   <span className="label w-8 shrink-0 text-gold-light">{s.number}</span>
                   <span className="font-display text-[clamp(1.75rem,4vw,3.25rem)] leading-[1.1] text-text transition-[color,transform] duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-2 group-hover:text-gold-light group-focus-visible:text-gold-light">
                     {s.name}
                   </span>
-                </button>
+                </a>
               </li>
             ))}
           </ol>

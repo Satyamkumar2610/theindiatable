@@ -11,12 +11,15 @@ export const motion = {
 export const prefersReducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/** WebGL (Silk-style shader) only on capable, pointer-driven, motion-permitting devices. */
+/**
+ * WebGL silk: any device that permits motion, has more than 4 cores and is not
+ * asking to save data. Phones included (rendered at low resolution, 30fps,
+ * started on first interaction); everything else keeps the CSS room.
+ */
 export const canUseWebGL = () => {
   if (typeof window === "undefined") return false;
   if (prefersReducedMotion()) return false;
-  if (window.matchMedia("(hover: none)").matches) return false;
-  if (!window.matchMedia("(min-width: 64rem) and (pointer: fine)").matches) return false;
-  const cores = navigator.hardwareConcurrency ?? 2;
-  return cores > 4;
+  const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
+  if (nav.connection?.saveData) return false;
+  return (navigator.hardwareConcurrency ?? 2) > 4;
 };

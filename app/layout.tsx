@@ -58,7 +58,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html
       lang="en-IN"
       className={`${caslon.variable} ${montserrat.variable} ${hanken.variable}`}
-      suppressHydrationWarning
     >
       <body>
         <a

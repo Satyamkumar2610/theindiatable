@@ -14,4 +14,11 @@ const whenIdle = () =>
     else window.addEventListener("load", idle, { once: true });
   });
 
-export const loadMotion = () => (pending ??= whenIdle().then(() => import("./gsap")));
+export const loadMotion = () =>
+  (pending ??= whenIdle()
+    .then(() => import("./gsap"))
+    .catch((err) => {
+      // Without GSAP every scene must show its final, readable state.
+      document.documentElement.classList.add("no-motion");
+      throw err;
+    }));

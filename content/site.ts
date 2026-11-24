@@ -60,6 +60,8 @@ export const nav = {
     { label: "Principles", href: "/principles" },
   ],
   cta: { label: "Request an invitation", href: "/invitation" },
+  /** Short form for the nav on phones; the full label stays as the accessible name. */
+  ctaShort: "Invitation",
 } as const;
 
 export const arrival = {
@@ -83,6 +85,10 @@ export const idea = {
     "The India Table puts the generation shaping India's aspirations in the same room as the people shaping India's policies, giving policymakers a direct window into the ideas and ambitions of India's emerging generation, and giving young leaders a deeper understanding of the decisions that will shape the environment in which they build.",
   pullQuote:
     "The idea is simple: put the generation shaping India's aspirations in the same room as the people shaping India's policies.",
+  /** The two constituencies, as the concept note names them. Used as the two sides of the mark in 02. */
+  sides: ["The generation shaping India's aspirations", "The people shaping India's policies"],
+  /** Structural credit linking to the founders (interface copy; names come from people.founders). */
+  creditLabel: "Convened by the founding team",
 } as const;
 
 export const distinction = {
@@ -206,6 +212,20 @@ export const engagement = {
   cta: { label: "Request an invitation", href: "/invitation" },
 } as const;
 
+/**
+ * Questions the target reader asked that the client has not answered yet.
+ * TODO: client to supply. Nothing here renders until it is real copy.
+ */
+export const pending = {
+  houseRules: "TODO: house rules (Chatham House? no press, no photography, no sponsored speaking?)",
+  cost: "TODO: is there a fee or time commitment for participants?",
+  selection: "TODO: how participants are selected (nomination, review, criteria)",
+  cadence: "TODO: how often Tables are convened",
+  governmentSeats: "TODO: how many senior voices sit at each Table",
+  afterRequest: "TODO: what happens after a request, and when",
+  sublineTone: "TODO: client to approve softening 'most influential' in the subline (reader found it self-congratulatory)",
+} as const;
+
 export const principlesPage = {
   /** TODO: client to supply how participants are selected. */
   selection: "TODO: how participants are selected",
@@ -218,6 +238,8 @@ export const principlesPage = {
 export const invitation = {
   confirmation:
     "Thank you. Every request is read by the founding team. We will write to you personally.",
+  /** The same promise, shown before someone writes (the confirmation copy without "Thank you."). */
+  promise: "Every request is read by the founding team. We will write to you personally.",
 } as const;
 
 export const footer = {

@@ -11,8 +11,10 @@
   --color-gold-light: #e3c98f;
   --color-hairline: rgb(201 164 92 / 0.32);
   --color-input: #ffffff;
-  /* Shadow stop of the brushed gold sheen: gold folded toward black, derived from tokens. */
-  --color-gold-deep: color-mix(in oklab, var(--color-gold) 62%, var(--color-secondary));
+  /* Polished-gold stops, all derived from tokens (see MetalGradient). */
+  --color-gold-shadow: color-mix(in oklab, var(--color-gold) 45%, var(--color-secondary));
+  --color-gold-deep: color-mix(in oklab, var(--color-gold) 72%, var(--color-secondary));
+  --color-gold-hot: color-mix(in oklab, var(--color-gold-light) 55%, var(--color-text));
 
   --font-display: var(--font-caslon), "Times New Roman", serif;
   --font-label: var(--font-montserrat), system-ui, sans-serif;
@@ -104,7 +106,7 @@ html.lenis body {
     }
   }
 
-  /* The one secondary action style: text with a 1px gold underline that grows on hover. */
+  /* The one secondary action style: text with a 1px gold underline that grows on hover (transform only). */
   .text-link {
     position: relative;
     display: inline-flex;
@@ -112,44 +114,92 @@ html.lenis body {
     gap: 0.6em;
     padding-block: 0.35em;
     color: var(--color-text);
-    background: linear-gradient(var(--color-gold), var(--color-gold)) left bottom / 2.25em 1px no-repeat;
-    transition: background-size 0.6s var(--ease-out-expo), color 0.3s;
+    transition: color 0.3s;
+  }
+  .text-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--color-gold);
+    transform: scaleX(var(--u, 0.22));
+    transform-origin: 0 50%;
+    transition: transform 0.6s var(--ease-out-expo);
   }
   .text-link:hover,
   .text-link:focus-visible {
-    background-size: 100% 1px;
+    --u: 1;
     color: var(--color-gold-light);
   }
 
-  /* The only filled button on the site. */
+  /* The only filled button on the site: polished gold, a highlight band that travels once on hover. */
   .btn-invite {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 3.5rem;
-    padding: 0 1.75rem;
+    padding: 0 1.9rem;
+    overflow: hidden;
+    isolation: isolate;
     background: linear-gradient(
-        105deg,
-        var(--color-gold-light) 0%,
-        var(--color-gold) 38%,
-        color-mix(in oklab, var(--color-gold) 88%, var(--color-secondary)) 62%,
-        var(--color-gold) 82%,
-        var(--color-gold-light) 100%
-      )
-      0% 0% / 220% 100%;
-    color: var(--color-primary);
+      100deg,
+      var(--color-gold) 0%,
+      color-mix(in oklab, var(--color-gold) 70%, var(--color-gold-light)) 45%,
+      var(--color-gold) 70%,
+      color-mix(in oklab, var(--color-gold) 86%, var(--color-secondary)) 100%
+    );
+    color: var(--color-secondary);
     font-family: var(--font-label);
     font-weight: 500;
     font-size: 0.75rem;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    transition: background-position 1.2s var(--ease-out-expo);
   }
-  /* Hover: the light travels across the metal once. No glow. */
-  .btn-invite:hover,
-  .btn-invite:focus-visible {
-    background-position: 100% 0%;
+  .btn-invite::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      100deg,
+      transparent 35%,
+      color-mix(in oklab, var(--color-gold-hot) 80%, transparent) 50%,
+      transparent 65%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.9s var(--ease-out-expo);
   }
+  .btn-invite:hover::before,
+  .btn-invite:focus-visible::before {
+    transform: translateX(100%);
+  }
+
+  /* Small structural label (brief: "[ 02 — THE IDEA ]"), demoted: soft, never gold. */
+  .stage-label {
+    font-family: var(--font-label);
+    font-weight: 500;
+    font-size: 0.6875rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--color-text-soft);
+  }
+
+  .measure {
+    max-width: 60ch;
+  }
+}
+
+/* Anchored stages clear the fixed nav; touch polish. */
+[data-stage] {
+  scroll-margin-top: 4rem;
+}
+a,
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -165,468 +215,114 @@ html.lenis body {
 
 
 /* ===========================================================================
-   [01] The Arrival — the doors.
-   Desktop + motion: GSAP pins and swings the leaves (arrival-motion.ts), after
-   a CSS load sequence that rules the mouldings in. Everywhere else the doors
-   rest swung open in CSS, so the state is right before any JavaScript.
+   Shared motifs
+   =========================================================================== */
+/* Lockup layers (see LockupMark): outer wrappers move on scroll, inner graphics on load. */
+.lk,
+.lk-in,
+.lk-clip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+/* The figure rises from behind the monogram's baseline (y = 300 of 494). */
+.lk-clip {
+  clip-path: inset(-100% -100% 39.3% -100%);
+}
+.lk-head .lk-in {
+  transform-origin: 53% 4.6%;
+}
+.lk-rule .lk-in {
+  transform-origin: 51.6% 87.1%;
+}
+.seat {
+  fill: color-mix(in oklab, var(--color-gold-light) 28%, transparent);
+}
+.seat.is-lit {
+  fill: var(--color-gold-light);
+}
+
+/* ===========================================================================
+   [01] The Arrival — the logo is the threshold.
    =========================================================================== */
 .arrival {
-  --mark-top: 5.25rem;
-  --mark-w: 6.75rem;
-  --mark-h: calc(var(--mark-w) * 0.916);
-  --frame-x: 1.25rem;
-  --frame-seam: 0.75rem;
-  --frame-top: 4.5rem;
-  --frame-bottom: 1.25rem;
-  --panel-inset: 1rem;
-  --panel-bottom: 0rem;
-  --bevel: 0.5rem;
-}
-@media (min-width: 48rem) {
-  .arrival {
-    --mark-top: 7rem;
-    --mark-w: 8.5rem;
-    --frame-x: 2rem;
-    --frame-seam: 1.25rem;
-    --frame-top: 6rem;
-    --frame-bottom: 2rem;
-    --panel-inset: 1.5rem;
-    --bevel: 0.75rem;
-  }
+  --lockup-w: min(76vw, 21rem);
 }
 @media (min-width: 64rem) {
   .arrival {
-    --mark-top: 7.25rem;
-    --mark-w: clamp(8.5rem, 10.5vw, 11rem);
-    --panel-inset: 2.25rem;
-    --bevel: 0.9rem;
-    /* The raised panel stops short of the floor: subline and action sit in the band below it. */
-    --panel-bottom: 7.5rem;
+    --lockup-w: clamp(20rem, 30vw, 30rem);
   }
 }
-
-/* The room: silk folds in CSS as the poster; the WebGL silk replaces it on desktop. */
-.room {
-  transform-origin: 50% 42%;
-  background: var(--color-secondary);
+.arrival-lockup {
+  width: var(--lockup-w);
+  height: auto;
 }
-.room-poster {
-  background:
-    linear-gradient(
-      118deg,
-      transparent 8%,
-      color-mix(in oklab, var(--color-primary-raised) 55%, transparent) 24%,
-      transparent 40%
-    ),
-    linear-gradient(
-      118deg,
-      transparent 42%,
-      color-mix(in oklab, var(--color-primary) 85%, transparent) 56%,
-      transparent 70%
-    ),
-    linear-gradient(
-      118deg,
-      transparent 66%,
-      color-mix(in oklab, var(--color-primary-raised) 45%, transparent) 80%,
-      transparent 94%
-    ),
-    radial-gradient(120% 80% at 50% 38%, transparent 40%, var(--color-secondary) 100%);
-  opacity: 0.7;
+.arrival-silk {
+  opacity: 0.45;
+  animation: fade-in 2s ease-out backwards;
 }
-.room-silk {
-  opacity: 0.6;
-  animation: fade-in 1.4s ease-out backwards;
-}
-
-/* The doorway and its leaves. */
-.doorway {
-  perspective: 1800px;
-  perspective-origin: 50% 42%;
-}
-.door-leaf {
-  --sx: -999px;
-  --sy: -999px;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-.door-leaf--l {
-  left: 0;
-  transform-origin: 0% 50%;
-}
-.door-leaf--r {
-  right: 0;
-  transform-origin: 100% 50%;
-}
-.leaf-face {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  backface-visibility: hidden;
-  /* Lacquer: light from above, falling away toward the floor. */
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--color-primary-raised) 55%, var(--color-primary)) 0%,
-    var(--color-primary) 36%,
-    color-mix(in oklab, var(--color-primary) 78%, var(--color-secondary)) 100%
-  );
-}
-
-/* Moulding lines, ruled in four strokes. */
-.frame {
-  position: absolute;
-  pointer-events: none;
-}
-.frame > i {
-  position: absolute;
-  background: currentColor;
-}
-.frame-t {
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  transform-origin: 0 50%;
-}
-.frame-r {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 1px;
-  transform-origin: 50% 0;
-}
-.frame-b {
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  transform-origin: 100% 50%;
-}
-.frame-l {
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 1px;
-  transform-origin: 50% 100%;
-}
-
-.door-leaf--l .leaf-frame {
-  inset: var(--frame-top) var(--frame-seam) var(--frame-bottom) var(--frame-x);
-}
-.door-leaf--r .leaf-frame {
-  inset: var(--frame-top) var(--frame-x) var(--frame-bottom) var(--frame-seam);
-}
-
-/* Raised and fielded panel: four bevel facets, lit from above and from the seam. */
-.leaf-panel {
-  position: absolute;
-  border: var(--bevel) solid;
-  border-top-color: color-mix(in oklab, var(--color-primary-raised) 90%, var(--color-text));
-  border-bottom-color: color-mix(in oklab, var(--color-primary) 55%, var(--color-secondary));
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--color-primary-raised) 40%, var(--color-primary)) 0%,
-    var(--color-primary) 55%,
-    color-mix(in oklab, var(--color-primary) 88%, var(--color-secondary)) 100%
-  );
-}
-.door-leaf--l .leaf-panel {
-  inset: calc(var(--frame-top) + var(--panel-inset)) calc(var(--frame-seam) + var(--panel-inset))
-    calc(var(--frame-bottom) + var(--panel-inset) + var(--panel-bottom)) calc(var(--frame-x) + var(--panel-inset));
-  border-left-color: color-mix(in oklab, var(--color-primary) 70%, var(--color-secondary));
-  border-right-color: color-mix(in oklab, var(--color-primary-raised) 75%, var(--color-primary));
-}
-.door-leaf--r .leaf-panel {
-  inset: calc(var(--frame-top) + var(--panel-inset)) calc(var(--frame-x) + var(--panel-inset))
-    calc(var(--frame-bottom) + var(--panel-inset) + var(--panel-bottom)) calc(var(--frame-seam) + var(--panel-inset));
-  border-left-color: color-mix(in oklab, var(--color-primary-raised) 75%, var(--color-primary));
-  border-right-color: color-mix(in oklab, var(--color-primary) 70%, var(--color-secondary));
-}
-.leaf-panel--ghost {
-  border-color: transparent;
-  background: none;
-}
-.leaf-panel-line {
-  inset: 0.55rem;
-}
-
-/* Cursor light: a sheen on the lacquer and a glint along the gold mouldings. */
-.leaf-spec {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    circle 30rem at var(--sx) var(--sy),
-    color-mix(in oklab, var(--color-text) 8%, transparent),
-    transparent 70%
-  );
-}
-.leaf-glint {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  mask-image: radial-gradient(circle 15rem at var(--sx) var(--sy), black, transparent 72%);
-}
-.leaf-grain {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.07;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-.leaf-shade {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: var(--color-secondary);
-  opacity: 0;
-}
-
-/* The headline carved across the two leaves (desktop with motion only). */
-.leaf-words {
-  display: none;
-  position: absolute;
-  top: 33%;
-  margin: 0;
-  font-size: clamp(3.75rem, 6vw, 6.75rem);
-  line-height: 1.02;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-}
-.leaf-words > span {
-  display: block;
-}
-.door-leaf--l .leaf-words {
-  right: calc(var(--frame-seam) + var(--panel-inset) + var(--bevel) + 2.75rem);
-  text-align: right;
-}
-.door-leaf--r .leaf-words {
-  top: calc(33% + 1.02em);
-  left: calc(var(--frame-seam) + var(--panel-inset) + var(--bevel) + 2.75rem);
-}
-
-/* The T handles, aligned to the figure on the seam. */
-.leaf-t {
-  position: absolute;
-  top: var(--mark-top);
-  width: var(--mark-w);
-  height: var(--mark-h);
-  transform: translateZ(1px);
-}
-.door-leaf--l .leaf-t {
-  right: calc(var(--mark-w) / -2);
-}
-.door-leaf--r .leaf-t {
-  left: calc(var(--mark-w) / -2);
-}
-
-/* Leaf thickness: brushed gold, edge-on (invisible) until the door turns. */
-.leaf-edge {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1.1rem;
-  background: linear-gradient(
-    180deg,
-    var(--color-gold-light),
-    var(--color-gold) 35%,
-    var(--color-gold-deep) 100%
-  );
-}
-.door-leaf--l .leaf-edge {
-  right: 0;
-  transform-origin: 100% 50%;
-  transform: rotateY(-90deg);
-}
-.door-leaf--r .leaf-edge {
-  left: 0;
-  transform-origin: 0 50%;
-  transform: rotateY(90deg);
-}
-
-.door-seam {
-  position: absolute;
-  top: var(--frame-top);
-  bottom: 0;
-  left: 50%;
-  width: 1px;
-  translate: -50% 0;
-  background: color-mix(in oklab, var(--color-gold) 70%, transparent);
-  mask-image: linear-gradient(to bottom, black 0 22%, transparent 32%, transparent 84%, black 94%);
-}
-
-/* Front layer: figure, table, words, action. */
-.door-figure,
-.mark-sheen {
-  position: absolute;
-  top: var(--mark-top);
-  left: calc(50% - var(--mark-w) / 2);
-  width: var(--mark-w);
-  height: var(--mark-h);
-}
-.mark-sheen {
-  pointer-events: none;
-  opacity: 0;
-  mask: url("/brand/india-table-monogram.svg") center / contain no-repeat;
-  background: linear-gradient(
-      105deg,
-      transparent 40%,
-      color-mix(in oklab, var(--color-text) 75%, transparent) 50%,
-      transparent 60%
-    )
-    120% 0 / 300% 100% no-repeat;
-}
-.table-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(var(--mark-top) + var(--mark-h) - 1px);
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-gold) 20%, var(--color-gold) 80%, transparent);
-  transform: scaleX(0);
-}
-.arrival-copy {
-  padding-top: calc(var(--mark-top) + var(--mark-h) + 1.25rem);
+.arrival-vignette {
+  background: radial-gradient(120% 90% at 50% 40%, transparent 45%, color-mix(in oklab, var(--color-secondary) 70%, transparent) 100%);
 }
 .arrival-cue {
   display: none;
 }
 
-/* ---- Desktop with motion: closed doors, carved headline, load sequence. ---- */
-@media (min-width: 64rem) and (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .leaf-words {
-    display: block;
+/* The assembly: seat, table, figure rising, the T's closing like doors, then the name. */
+@media (prefers-reduced-motion: no-preference) {
+  .lk-head .lk-in {
+    animation: seat-in 0.9s var(--ease-out-expo) 0.15s backwards;
   }
-  .arrival-title {
+  .lk-rule .lk-in {
+    animation: rule-in 1.3s var(--ease-out-expo) 0.45s backwards;
+  }
+  .lk-fig .lk-in {
+    animation: figure-up 1.2s var(--ease-out-expo) 0.85s backwards;
+  }
+  .lk-tl .lk-in {
+    animation: door-l 1.3s var(--ease-out-expo) 1.25s backwards;
+  }
+  .lk-tr .lk-in {
+    animation: door-r 1.3s var(--ease-out-expo) 1.25s backwards;
+  }
+  .lk-word .lk-in {
+    animation: name-in 1.2s var(--ease-out-expo) 1.7s backwards;
+  }
+  .lk-tag .lk-in {
+    animation: fade-in 1.2s ease-out 2.1s backwards;
+  }
+}
+
+/* Desktop with motion: the second beat and the action arrive with the opening. */
+@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+  html:not(.no-motion) .arrival-reveal {
     opacity: 0;
+  }
+  .arrival {
+    height: 100svh;
+  }
+  .arrival-line1 {
+    animation: rise-in 1.4s var(--ease-out-expo) 1.1s backwards;
   }
   .arrival-cue {
     position: absolute;
+    bottom: 2rem;
     left: 50%;
-    bottom: 1.75rem;
     translate: -50% 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.9rem;
-    animation: fade-in 1.2s ease-out 2.2s backwards;
+    animation: fade-in 1.2s ease-out 2.6s backwards;
   }
-  .arrival-cue-track {
-    position: relative;
-    width: 1px;
-    height: 3rem;
-    overflow: hidden;
-    background: var(--color-hairline);
-  }
-  .arrival-cue-fill {
-    position: absolute;
-    inset: 0;
-    background: var(--color-gold);
-    transform: scaleY(0);
-    transform-origin: 50% 0;
-  }
-
-  /* Mouldings rule themselves in: outer frame, then the panel line. */
-  .frame-t,
-  .frame-b {
-    animation: rule-x 1.1s var(--ease-out-expo) backwards;
-  }
-  .frame-r,
-  .frame-l {
-    animation: rule-y 1.1s var(--ease-out-expo) backwards;
-  }
-  .frame-t {
-    animation-delay: calc(var(--o, 0s) + 0.1s);
-  }
-  .frame-r {
-    animation-delay: calc(var(--o, 0s) + 0.3s);
-  }
-  .frame-b {
-    animation-delay: calc(var(--o, 0s) + 0.5s);
-  }
-  .frame-l {
-    animation-delay: calc(var(--o, 0s) + 0.7s);
-  }
-  .leaf-panel-line {
-    --o: 0.45s;
-  }
-  .leaf-panel:not(.leaf-panel--ghost) {
-    animation: fade-in 1.4s ease-out 0.2s backwards;
-  }
-
-  /* The carved words surface out of the lacquer. */
-  .leaf-words > span {
-    animation: carve-in 1.6s var(--ease-out-expo) backwards;
-  }
-  .door-leaf--l .leaf-words > span:nth-child(1) {
-    animation-delay: 0.35s;
-  }
-  .door-leaf--l .leaf-words > span:nth-child(2) {
-    animation-delay: 0.5s;
-  }
-  .door-leaf--r .leaf-words > span:nth-child(1) {
-    animation-delay: 0.65s;
-  }
-  .door-leaf--r .leaf-words > span:nth-child(2) {
-    animation-delay: 0.8s;
-  }
-
-  .leaf-t,
-  .door-figure {
-    animation: fade-in 1.2s ease-out 0.7s backwards;
-  }
-  .mark-sheen {
-    animation: sheen 1.9s ease-in-out 1.4s;
-  }
-  .arrival-after {
-    animation: rise-in 1.1s var(--ease-out-expo) 1.25s backwards;
-  }
-}
-
-/* ---- Phones, tablets and reduced motion: the doors rest swung open. ---- */
-@media not all and (min-width: 64rem) and (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .doorway {
-    perspective: 1000px;
-  }
-  .door-leaf--l {
-    transform: rotateY(74deg);
-  }
-  .door-leaf--r {
-    transform: rotateY(-74deg);
-  }
-  .leaf-shade {
-    opacity: 0.5;
-  }
-  .door-seam {
-    opacity: 0;
-  }
-  .door-figure {
-    transform: translateY(-7%);
-  }
-  .table-line {
-    transform: scaleX(1);
-  }
-}
-@media (max-width: 63.998rem) and (prefers-reduced-motion: no-preference),
-  (hover: none) and (prefers-reduced-motion: no-preference) {
-  .door-leaf {
-    animation: leaf-swing 2.2s var(--ease-out-expo) 0.35s backwards;
-  }
-  .leaf-shade {
-    animation: fade-in-from-zero 2.2s var(--ease-out-expo) 0.35s backwards;
-  }
-  .door-seam {
-    animation: fade-out-from-one 0.5s ease-out 0.35s backwards;
-  }
-  .door-figure {
-    animation: figure-rise 1.6s var(--ease-out-expo) 1.2s backwards;
-  }
-  .table-line {
-    animation: table-draw 1.6s var(--ease-out-expo) 1.5s backwards;
+  .arrival-cue-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-gold-light);
+    animation: cue-drop 2.4s var(--ease-out-expo) 3s infinite;
   }
 }
 
@@ -635,64 +331,106 @@ html.lenis body {
     opacity: 0;
   }
 }
-@keyframes fade-in-from-zero {
-  from {
-    opacity: 0;
-  }
-}
-@keyframes fade-out-from-one {
-  from {
-    opacity: 1;
-  }
-}
-@keyframes rule-x {
-  from {
-    transform: scaleX(0);
-  }
-}
-@keyframes rule-y {
-  from {
-    transform: scaleY(0);
-  }
-}
-@keyframes carve-in {
-  from {
-    opacity: 0;
-    filter: blur(12px);
-    transform: translateY(0.18em);
-  }
-}
 @keyframes rise-in {
   from {
     opacity: 0;
     transform: translateY(14px);
   }
 }
-@keyframes sheen {
-  0% {
-    opacity: 1;
-    background-position: 120% 0;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
+@keyframes seat-in {
+  from {
     opacity: 0;
-    background-position: -20% 0;
+    transform: scale(0.3);
   }
 }
-@keyframes leaf-swing {
-  from {
-    transform: rotateY(0deg);
-  }
-}
-@keyframes figure-rise {
-  from {
-    transform: translateY(0);
-  }
-}
-@keyframes table-draw {
+@keyframes rule-in {
   from {
     transform: scaleX(0);
   }
+}
+@keyframes figure-up {
+  from {
+    transform: translateY(61%);
+  }
+}
+@keyframes door-l {
+  from {
+    opacity: 0;
+    transform: translateX(-11.4%);
+  }
+}
+@keyframes door-r {
+  from {
+    opacity: 0;
+    transform: translateX(11.4%);
+  }
+}
+@keyframes name-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@keyframes cue-drop {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+/* [03] The gold rule strikes out what this is not, then becomes the table. */
+.strike {
+  position: absolute;
+  left: -0.08em;
+  right: -0.08em;
+  top: 54%;
+  height: 2px;
+  background: var(--color-gold);
+  transform-origin: 0 50%;
+}
+.dist-table {
+  position: absolute;
+  left: -4vw;
+  right: -30vw;
+  bottom: -0.06em;
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-gold) 70%, transparent);
+  transform-origin: 0 50%;
+}
+/* Struck lines rest at a level that still passes 3:1 for large text. */
+.dist-l1,
+.dist-l2 {
+  opacity: 0.5;
+}
+
+/* A lockup that assembles on scroll (08) skips the load-time assembly. */
+.lockup--static .lk-in {
+  animation: none !important;
+}
+.eng-silk {
+  opacity: 0.5;
+  animation: fade-in 2s ease-out backwards;
+}
+
+/* Nav ground: a separate layer fades in, so backdrop-filter itself never animates. */
+.site-nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--color-primary) 82%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--color-hairline);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.site-nav[data-scrolled="true"]::before {
+  opacity: 1;
 }

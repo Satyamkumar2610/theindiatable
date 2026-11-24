@@ -1,14 +1,10 @@
 import { eyebrow, type Stage } from "@/content/site";
 
-/**
- * The stage label set as a running head on the section's gold rule (like a
- * book's running head), not stacked over the heading as a kicker.
- */
+/** The brief's stage label ("[ 02 — THE IDEA ]"), demoted: small, soft, in the content column. */
 export function RunningHead({ stage, className = "" }: { stage: Stage; className?: string }) {
   return (
-    <div className={`flex items-center gap-5 ${className}`} aria-hidden="true">
-      <span className="label whitespace-nowrap text-gold-light">{eyebrow(stage)}</span>
-      <span className="h-px flex-1 bg-hairline" />
-    </div>
+    <p className={`stage-label ${className}`} aria-hidden="true">
+      {eyebrow(stage)}
+    </p>
   );
 }

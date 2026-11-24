@@ -5,17 +5,21 @@ import { useLenis } from "lenis/react";
 import { stages } from "@/content/site";
 import { scrollToTarget } from "@/lib/scroll";
 
-/** Desktop (≥1024px) margin index 01–08. Active stage in gold, updated by ScrollTrigger. */
+/**
+ * Desktop index: one gold seat travelling a hairline on the right edge.
+ * Stage names appear on hover or focus. Hidden (and inert) during the Arrival.
+ */
 export function IndexRail() {
-  const [active, setActive] = useState<string>(stages[0].id);
+  const [active, setActive] = useState(0);
   const lenis = useLenis();
 
   useEffect(() => {
-    // The stage crossing the viewport's centre line is the active one.
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
-          if (e.isIntersecting) setActive((e.target as HTMLElement).dataset.stage ?? stages[0].id);
+          if (!e.isIntersecting) continue;
+          const i = stages.findIndex((s) => s.id === (e.target as HTMLElement).dataset.stage);
+          if (i >= 0) setActive(i);
         }
       },
       { rootMargin: "-50% 0px -50% 0px" },
@@ -24,32 +28,41 @@ export function IndexRail() {
     return () => io.disconnect();
   }, []);
 
+  const hidden = active === 0;
+  const step = 2.25; // rem between stops
+
   return (
     <nav
       aria-label="Stages"
-      className={`pointer-events-none fixed top-1/2 left-8 z-40 hidden -translate-y-1/2 transition-opacity duration-700 lg:block ${active === stages[0].id ? "opacity-0" : "opacity-100"}`}
+      inert={hidden}
+      className={`fixed top-1/2 right-8 z-40 hidden -translate-y-1/2 transition-opacity duration-700 lg:block ${hidden ? "opacity-0" : "opacity-100"}`}
     >
-      <ol className={`flex flex-col gap-1 ${active === stages[0].id ? "" : "pointer-events-auto"}`}>
-        {stages.map((s) => {
-          const on = s.id === active;
-          return (
-            <li key={s.id}>
-              <button
-                type="button"
-                aria-current={on ? "step" : undefined}
-                aria-label={`${s.number} ${s.name}`}
-                onClick={() => scrollToTarget(`#${s.id}`, lenis)}
-                className={`label group flex items-center gap-3 py-1.5 transition-colors duration-500 ${on ? "text-gold-light" : "text-text-soft hover:text-text"}`}
+      <span className="absolute top-0 right-[3px] h-full w-px bg-hairline" aria-hidden="true" />
+      <span
+        className="absolute right-0 h-[7px] w-[7px] rounded-full bg-gold-light transition-transform duration-700 ease-[var(--ease-out-expo)]"
+        style={{ top: "calc(0.75rem - 3.5px)", transform: `translateY(${active * step}rem)` }}
+        aria-hidden="true"
+      />
+      <ol className="relative flex flex-col" style={{ gap: `${step - 1.5}rem` }}>
+        {stages.map((s, i) => (
+          <li key={s.id}>
+            <a
+              href={`#${s.id}`}
+              aria-current={i === active ? "step" : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToTarget(`#${s.id}`, lenis);
+              }}
+              className="group flex h-6 items-center justify-end gap-3 pr-5"
+            >
+              <span
+                className={`label whitespace-nowrap opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 ${i === active ? "text-gold-light" : "text-text-soft"}`}
               >
-                <span
-                  className={`h-px transition-[width,background-color] duration-700 ease-[var(--ease-out-expo)] ${on ? "w-6 bg-gold" : "w-3 bg-current"}`}
-                  aria-hidden="true"
-                />
-                {s.number}
-              </button>
-            </li>
-          );
-        })}
+                {s.number}&nbsp;&nbsp;{s.name}
+              </span>
+            </a>
+          </li>
+        ))}
       </ol>
     </nav>
   );

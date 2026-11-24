@@ -35,7 +35,7 @@ export function Footer() {
               </li>
             )}
           </ul>
-          <p className="label text-text-soft">
+          <p className="label text-text-soft" translate="no">
             © <Year /> {brand.copyright}
           </p>
         </div>

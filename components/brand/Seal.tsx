@@ -17,7 +17,7 @@ export function Seal({ className, rotate = true }: { className?: string; rotate?
   return (
     <svg viewBox="0 0 200 200" className={className} aria-hidden="true">
       <defs>
-        <MetalGradient id={`${id}-metal`} x2={200} y2={200} />
+        <MetalGradient id={`${id}-metal`} />
         <path id={ring} d={`M100,${100 - R} a${R},${R} 0 1,1 -0.01,0`} />
       </defs>
       <circle cx="100" cy="100" r="99.5" fill="none" stroke="var(--color-hairline)" strokeWidth="1" />
