@@ -73,6 +73,8 @@ export const arrival = {
     "A curated, high-trust forum where India's most influential young leaders meet the policymakers and public leaders shaping the country today.",
   cta: { label: "Request an invitation", href: "/invitation" },
   secondary: { label: "Discover the idea", href: "#idea" },
+  /** Interface cue on desktop, not client copy. */
+  cue: "Scroll to enter",
 } as const;
 
 export const idea = {

@@ -11,6 +11,7 @@ import {
   monogramRightT,
   monogramViewBox,
 } from "@/components/brand/paths";
+import { Frame } from "@/components/motif/Frame";
 import { InviteButton } from "@/components/ui/Button";
 import { LinkArrow } from "@/components/ui/LinkArrow";
 import { arrival, stages } from "@/content/site";
@@ -19,25 +20,73 @@ import { loadMotion } from "@/lib/motion-loader";
 import { scrollToTarget } from "@/lib/scroll";
 
 const Silk = dynamic(() => import("@/components/reactbits/Silk"), { ssr: false });
+const Dust = dynamic(() => import("@/components/motif/Dust"), { ssr: false });
+
+/** The desktop headline, set on the two leaves and split at the comma. */
+const HALVES = {
+  l: ["Behind closed", "doors,"],
+  r: ["an open", "conversation."],
+} as const;
+
+function Leaf({ side, gid }: { side: "l" | "r"; gid: string }) {
+  const tPath = side === "l" ? monogramLeftT : monogramRightT;
+  return (
+    <div className={`door-leaf door-leaf--${side}`}>
+      <div className="leaf-face">
+        {/* Outer moulding, then a raised and bevelled panel with its own inner line. */}
+        <Frame className="leaf-frame text-hairline" />
+        <div className="leaf-panel">
+          <Frame className="leaf-panel-line text-hairline" />
+        </div>
+        {/* Cursor light: a soft sheen on the lacquer, and the gold lines brightening near it. */}
+        <span className="leaf-spec" />
+        <span className="leaf-glint">
+          <Frame className="leaf-frame text-gold-light" />
+          <span className="leaf-panel leaf-panel--ghost">
+            <Frame className="leaf-panel-line text-gold-light" />
+          </span>
+        </span>
+        <span className="leaf-grain" />
+
+        <p className="leaf-words font-display text-text">
+          <span>{HALVES[side][0]}</span>
+          <span>{HALVES[side][1]}</span>
+        </p>
+
+        <span className="leaf-shade" />
+      </div>
+
+      {/* The T rides its leaf: the monogram is the door handle. */}
+      <svg viewBox={monogramViewBox} className="leaf-t">
+        <path d={tPath} fill={`url(#${gid})`} fillRule="evenodd" />
+      </svg>
+
+      {/* Leaf thickness, gold-edged, seen only as the door turns. */}
+      <span className="leaf-edge" />
+    </div>
+  );
+}
 
 /**
- * [01] The Arrival. Two lacquered door leaves meet on a gold seam; the monogram
- * is the handle: each T rides its leaf and the figure stands on the seam. On
- * desktop the scene pins and the doors part on scroll, leaving the figure
- * standing in the room; the headline then resets word by word.
+ * [01] The Arrival. Two lacquered, panelled doors; the monogram is the handle,
+ * each T on its leaf and the figure standing on the seam. On desktop the
+ * scene pins and the doors swing inward on their hinges, the carved headline
+ * leaving with them; the room settles, gold dust drifts in the light, the
+ * table line draws out from the figure's feet and the headline rises again.
  */
 export function Arrival() {
   const root = useRef<HTMLElement>(null);
   const gid = useId();
   const lenis = useLenis();
-  // The silk room loads only once the doors begin to part, and pauses whenever they are shut.
-  const [silk, setSilk] = useState<"none" | "live" | "paused">("none");
-  const silkRef = useRef(silk);
+
+  // The silk room and dust load only once the doors begin to part, and pause whenever they are shut.
+  const [room, setRoomState] = useState<"none" | "live" | "paused">("none");
+  const roomRef = useRef(room);
   const setRoom = (open: boolean) => {
-    const next = open ? "live" : silkRef.current === "none" ? "none" : "paused";
-    if (next !== silkRef.current && (next !== "live" || canUseWebGL())) {
-      silkRef.current = next;
-      setSilk(next);
+    const next = open ? "live" : roomRef.current === "none" ? "none" : "paused";
+    if (next !== roomRef.current && (next !== "live" || canUseWebGL())) {
+      roomRef.current = next;
+      setRoomState(next);
     }
   };
 
@@ -63,85 +112,69 @@ export function Arrival() {
       aria-labelledby="arrival-title"
       className="arrival relative isolate h-svh min-h-[40rem] overflow-hidden bg-secondary"
     >
+      <svg width="0" height="0" className="absolute" aria-hidden="true">
+        <defs>
+          <MetalGradient id={gid} />
+        </defs>
+      </svg>
+
       {/* The room behind the doors. */}
-      <div className="room absolute inset-0 -z-10 opacity-0" aria-hidden="true">
-        {silk !== "none" && <Silk className="h-full w-full" active={silk === "live"} />}
+      <div className="room absolute inset-0 -z-10" aria-hidden="true">
+        <div className="room-poster absolute inset-0" />
+        {room !== "none" && (
+          <>
+            <Silk className="room-silk absolute inset-0 h-full w-full" active={room === "live"} />
+            <Dust className="absolute inset-0 h-full w-full" active={room === "live"} />
+          </>
+        )}
       </div>
 
-      {/* Door leaves. */}
-      <div aria-hidden="true">
-        <div className="door-leaf door-leaf--l absolute inset-y-0 left-0 w-1/2">
-          <span className="absolute top-20 bottom-5 right-3 left-5 border border-hairline md:top-24 md:bottom-8 md:right-5 md:left-8" />
-        </div>
-        <div className="door-leaf door-leaf--r absolute inset-y-0 right-0 w-1/2">
-          <span className="absolute top-20 bottom-5 right-5 left-3 border border-hairline md:top-24 md:bottom-8 md:right-8 md:left-5" />
-        </div>
-        <span className="door-seam absolute top-20 bottom-0 left-1/2 w-px -translate-x-1/2 bg-gold/70 md:top-24" />
+      {/* The doorway. */}
+      <div className="doorway absolute inset-0" aria-hidden="true">
+        <Leaf side="l" gid={gid} />
+        <Leaf side="r" gid={gid} />
+        <span className="door-seam" />
       </div>
 
-      {/* Copy column, with the monogram as the door handle. */}
-      <div className="relative z-10 mx-auto flex h-full max-w-[75rem] flex-col items-center justify-center px-6 pt-16 pb-10 text-center md:px-10">
-        <div
-          className="relative mb-8 aspect-[333/305] w-[clamp(7.5rem,14vw,12.5rem)] md:mb-12"
-          aria-hidden="true"
-        >
-          <svg width="0" height="0" className="absolute">
-            <defs>
-              <MetalGradient id={gid} />
-              <linearGradient
-                id={`${gid}-sheen`}
-                className="door-sheen"
-                gradientUnits="userSpaceOnUse"
-                x1="-333"
-                y1="0"
-                x2="0"
-                y2="0"
-              >
-                <stop offset="0" stopColor="white" stopOpacity="0" />
-                <stop offset="0.5" stopColor="white" stopOpacity="0.28" />
-                <stop offset="1" stopColor="white" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-          </svg>
-          {(
-            [
-              ["door-t door-t--l", monogramLeftT],
-              ["door-t door-t--r", monogramRightT],
-            ] as const
-          ).map(([cls, d]) => (
-            <svg key={cls} viewBox={monogramViewBox} className={`${cls} absolute inset-0 h-full w-full`}>
-              <path d={d} fill={`url(#${gid})`} fillRule="evenodd" />
-              <path d={d} fill={`url(#${gid}-sheen)`} fillRule="evenodd" />
-            </svg>
-          ))}
-          <svg viewBox={monogramViewBox} className="door-figure absolute inset-0 h-full w-full overflow-visible">
-            <path d={monogramFigure} fill={`url(#${gid})`} fillRule="evenodd" />
-            <path className="door-head" d={monogramHead} fill="var(--color-gold-light)" />
-          </svg>
-        </div>
+      {/* In front: the figure, the table, the words and the action. */}
+      <div className="arrival-front relative z-10 h-full">
+        <span className="table-line" aria-hidden="true" />
+        <svg viewBox={monogramViewBox} className="door-figure overflow-visible" aria-hidden="true">
+          <path d={monogramFigure} fill={`url(#${gid})`} fillRule="evenodd" />
+          <path className="door-head" d={monogramHead} fill="var(--color-gold-light)" />
+        </svg>
+        <span className="mark-sheen" aria-hidden="true" />
 
-        <h1
-          id="arrival-title"
-          className="arrival-title max-w-[14ch] font-display text-hero text-text"
-        >
-          {arrival.headlines[arrival.headline]}
-        </h1>
-
-        <div className="arrival-after mt-6 flex flex-col items-center md:mt-8">
-          <p className="max-w-[40ch] text-text-soft">{arrival.subline}</p>
-          <div className="mt-8 flex flex-col items-center gap-5 sm:flex-row sm:gap-10">
-            <InviteButton href={arrival.cta.href}>{arrival.cta.label}</InviteButton>
-            <LinkArrow
-              href={arrival.secondary.href}
-              dir="down"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToTarget(arrival.secondary.href, lenis);
-              }}
-            >
-              {arrival.secondary.label}
-            </LinkArrow>
+        <div className="arrival-copy mx-auto flex h-full max-w-[75rem] flex-col px-6 md:px-10">
+          <div className="flex flex-1 items-center justify-center">
+            <h1 id="arrival-title" className="arrival-title max-w-[14ch] text-center font-display text-hero text-text">
+              {arrival.headlines[arrival.headline]}
+            </h1>
           </div>
+
+          <div className="arrival-after flex flex-col items-center gap-8 pb-10 text-center lg:flex-row lg:items-end lg:justify-between lg:gap-16 lg:pb-12 lg:text-left">
+            <p className="max-w-[40ch] text-text-soft lg:max-w-[46ch]">{arrival.subline}</p>
+            <div className="flex flex-col items-center gap-5 sm:flex-row sm:gap-10 lg:shrink-0">
+              <InviteButton href={arrival.cta.href}>{arrival.cta.label}</InviteButton>
+              <LinkArrow
+                href={arrival.secondary.href}
+                dir="down"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToTarget(arrival.secondary.href, lenis);
+                }}
+              >
+                {arrival.secondary.label}
+              </LinkArrow>
+            </div>
+          </div>
+        </div>
+
+        <div className="arrival-cue" aria-hidden="true">
+          <span className="arrival-cue-track">
+            <span className="arrival-cue-fill" />
+          </span>
+          <span className="label text-text-soft">{arrival.cue}</span>
         </div>
       </div>
     </section>

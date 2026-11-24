@@ -1,15 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { useLenis } from "lenis/react";
 import { Seal } from "@/components/brand/Seal";
 import { InviteButton } from "@/components/ui/Button";
 import { nav, stages } from "@/content/site";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { motion } from "@/lib/motion";
+import { canUseWebGL, motion } from "@/lib/motion";
 import { scrollToTarget } from "@/lib/scroll";
+
+const Silk = dynamic(() => import("@/components/reactbits/Silk"), { ssr: false });
 
 /**
  * The Index: React Bits "Staggered Menu" pattern restyled. Two pre-layers
@@ -30,6 +33,7 @@ export function IndexOverlay({
   const lenis = useLenis();
   const pathname = usePathname();
   const router = useRouter();
+  const [webgl] = useState(() => typeof window !== "undefined" && canUseWebGL());
 
   useGSAP(
     () => {
@@ -127,7 +131,9 @@ export function IndexOverlay({
       data-lenis-prevent
     >
       <div className="pre absolute inset-0 bg-primary-raised" aria-hidden="true" />
-      <div className="pre absolute inset-0 bg-secondary" aria-hidden="true" />
+      <div className="pre absolute inset-0 overflow-hidden bg-secondary" aria-hidden="true">
+        {webgl && <Silk className="absolute inset-0 h-full w-full opacity-35" active={open} />}
+      </div>
 
       <div className="relative flex h-full flex-col overflow-y-auto">
         <div className="mx-auto grid h-16 w-full max-w-[90rem] grid-cols-[1fr_auto_1fr] items-center px-5 md:h-20 md:px-10">
