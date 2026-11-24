@@ -108,15 +108,15 @@ export function Arrival() {
         <div className="arrival-vignette absolute inset-0" />
       </div>
 
-      <div className="arrival-stage flex w-full flex-1 flex-col items-center px-6 pt-24 pb-10 text-center md:px-10 lg:pt-[15vh]">
+      <div className="arrival-stage flex w-full flex-1 flex-col items-center px-6 pt-24 pb-10 text-center md:px-10 lg:pt-[12svh] lg:pb-[5svh]">
         <LockupMark className="arrival-lockup" title={`${brand.name} — ${brand.tagline}`} />
 
-        <h1 id="arrival-title" className="arrival-title mt-[6vh] font-display text-hero text-text lg:mt-[8vh]">
+        <h1 id="arrival-title" className="arrival-title mt-[6vh] font-display text-hero text-text lg:mt-[5svh]">
           <span className="arrival-line1 block">{LINE1}</span>
           <span className="arrival-line2 arrival-reveal block">{LINE2}</span>
         </h1>
 
-        <div className="arrival-after arrival-reveal mt-8 flex flex-col items-center gap-8 lg:mt-10 lg:flex-row lg:gap-14 lg:text-left">
+        <div className="arrival-after arrival-reveal mt-8 flex flex-col items-center gap-8 lg:mt-[4svh] lg:flex-row lg:gap-14 lg:text-left">
           <p className="max-w-[44ch] text-text-soft lg:max-w-[40ch]">{arrival.subline}</p>
           <div className="flex flex-col items-center gap-5 sm:flex-row sm:gap-10">
             <InviteButton href={arrival.cta.href}>{arrival.cta.label}</InviteButton>

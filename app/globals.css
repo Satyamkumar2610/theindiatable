@@ -261,12 +261,18 @@ button {
 }
 @media (min-width: 64rem) {
   .arrival {
-    --lockup-w: clamp(20rem, 30vw, 30rem);
+    /* Height-aware: the pinned scene is exactly one screen tall, so it scales with the shorter side. */
+    --lockup-w: clamp(16rem, min(30vw, 40svh), 30rem);
   }
 }
 .arrival-lockup {
   width: var(--lockup-w);
   height: auto;
+}
+@media (min-width: 64rem) {
+  .arrival-title {
+    font-size: clamp(3rem, min(9vw, 13.5svh), 9.5rem);
+  }
 }
 .arrival-silk {
   opacity: 0.45;
