@@ -13,11 +13,17 @@ import { scrollToTarget } from "@/lib/scroll";
 
 const Silk = dynamic(() => import("@/components/reactbits/Silk"), { ssr: false });
 
-/** "Behind closed doors," / "an open conversation." — split at the comma for the two beats. */
+/**
+ * The headline lands in two beats: "Shaping the ecosystems" / "that shape India."
+ * Split at the first comma if there is one, otherwise before the relative clause (" that ").
+ */
 const [LINE1, LINE2] = (() => {
   const h = arrival.headlines[arrival.headline];
-  const i = h.indexOf(",");
-  return i > 0 ? [h.slice(0, i + 1), h.slice(i + 2)] : [h, ""];
+  const comma = h.indexOf(",");
+  if (comma > 0) return [h.slice(0, comma + 1), h.slice(comma + 2)];
+  const that = h.indexOf(" that ");
+  if (that > 0) return [h.slice(0, that), h.slice(that + 1)];
+  return [h, ""];
 })();
 
 /**
@@ -79,7 +85,7 @@ export function Arrival() {
       // The figure steps down to the table, then rises at it.
       .fromTo(q(".lk-fig, .lk-head"), { y: 0 }, { y: px(figToTable), duration: 0.3, ease: "power2.inOut" }, 0.14)
       .to(q(".lk-fig, .lk-head"), { y: px(figToTable - 30), duration: 0.2, ease: "power2.out" }, 0.46)
-      // "an open conversation."
+      // second beat of the headline
       .from(split.words, { yPercent: 110, duration: 0.14, stagger: 0.025, ease: "power3.out", immediateRender: true }, 0.56)
       .fromTo(q(".arrival-after"), { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.12, immediateRender: true }, 0.78)
       .to({}, { duration: 0.08 });

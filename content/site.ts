@@ -66,7 +66,8 @@ export const nav = {
 
 export const arrival = {
   headlines: {
-    A: "Behind closed doors, an open conversation.",
+    /** Client to approve: replaces "Behind closed doors, an open conversation." (user direction, 2026-11-24). */
+    A: "Shaping the ecosystems that shape India.",
     B: "A seat at the table for the India of tomorrow.",
   },
   /** Which headline renders. Brief: A by default. */
