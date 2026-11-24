@@ -66,7 +66,7 @@ export function Engagement() {
         <div className="arrival-vignette absolute inset-0" />
       </div>
 
-      <div className={`${container} flex min-h-svh flex-col items-center justify-center py-28 text-center lg:py-40`}>
+      <div className={`${container} flex min-h-svh flex-col items-center justify-center py-40 text-center lg:py-56`}>
         <RunningHead stage={stage} />
         <LockupMark className="lockup--static mt-14 w-[min(70vw,24rem)]" />
 

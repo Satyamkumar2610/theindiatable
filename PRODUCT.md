@@ -16,11 +16,11 @@ Primary: an industrialist, founder, senior business leader, policymaker, or some
 
 ## Product Purpose
 
-The India Table is a curated, invitation-only, closed-door leadership forum. Each Table puts 20–30 of India's next-generation industrialists, founders, business leaders and youth-facing voices in one room with Union Ministers, senior policymakers and eminent public leaders, around one defining national issue. The site exists to make that room legible and desirable to the people it wants in it, and to route serious interest into a personal, read-by-the-founders enquiry. Success: the right people ask to be considered, nominate others, or approach as institutional partners.
+The India Table is a curated, invitation-only, closed-door leadership forum. Each Table puts 20–30 established industrialists, business leaders, investors and founders in one room with Union Ministers, senior policymakers and eminent public leaders, around one defining national issue. (Audience pivot, user direction 2026-11-24: participants are established leaders, not young or next-generation leaders. The concept note's youth framing is superseded; client to approve the rewritten copy.) The site exists to make that room legible and desirable to the people it wants in it, and to route serious interest into a personal, read-by-the-founders enquiry. Success: the right people ask to be considered, nominate others, or approach as institutional partners.
 
 ## Positioning
 
-The quality of the room is the point. Not a conference, not a panel, not an audience: a table. A two-way exchange (policymakers see young India's ambitions; young leaders understand policy) and a network that persists across Tables. Discretion is the hook: the site never reveals names, dates, venues or guest lists.
+The quality of the room is the point. Not a conference, not a panel, not an audience: a table. A two-way exchange (policymakers see the realities of Indian enterprise; business leaders understand policy) and a network that persists across Tables. Discretion is the hook: the site never reveals names, dates, venues or guest lists.
 
 ## Operating Context
 

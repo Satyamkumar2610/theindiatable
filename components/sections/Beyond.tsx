@@ -37,10 +37,10 @@ export function Beyond() {
   });
 
   return (
-    <Section ref={root} stage={stage} ground="black" className="overflow-hidden py-28 lg:py-40">
+    <Section ref={root} stage={stage} ground="black" className="overflow-hidden py-40 lg:py-56">
       <div className={container}>
         <RunningHead stage={stage} />
-        <h2 id="beyond-title" className="mx-auto mt-16 max-w-[14ch] text-center font-display text-[clamp(3rem,8vw,7.5rem)] leading-[1.02] text-text">
+        <h2 id="beyond-title" className="mx-auto mt-16 max-w-[18ch] text-center font-display text-[clamp(2.75rem,6vw,6rem)] leading-[1.04] text-text">
           {beyond.headline}
         </h2>
       </div>

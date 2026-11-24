@@ -5,6 +5,11 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  // Vendored React Bits sources: kept close to upstream so they can be updated.
+  {
+    files: ["components/reactbits/**"],
+    rules: { "react-hooks/refs": "off", "@next/next/no-img-element": "off" },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

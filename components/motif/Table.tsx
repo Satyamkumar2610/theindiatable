@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 /**
  * The room seen from above: a table outline with seats around it. Each seat
  * is the monogram's head dot. The head of the table (left end, or top end in
@@ -60,9 +62,11 @@ export function Table({
   className?: string;
   seatR?: number;
 }) {
+  const id = useId();
   const g = GEO[orientation];
   const seats = seatLayout(orientation);
   const r = Math.min(g.w, g.h) / 2;
+  const inset = 12;
   // The head of the table: the arc at the left end (landscape) or top end (portrait).
   const head =
     orientation === "landscape"
@@ -70,6 +74,34 @@ export function Table({
       : `M ${g.x} ${g.y + r} A ${r} ${r} 0 0 1 ${g.x + g.w} ${g.y + r}`;
   return (
     <svg viewBox={g.vb} className={`table-svg ${className}`} aria-hidden="true">
+      <defs>
+        {/* Lacquered top: lit from above the centre, falling to black at the rim. */}
+        <radialGradient id={`${id}-top`} cx="50%" cy="38%" r="70%">
+          <stop offset="0" stopColor="var(--color-primary-raised)" />
+          <stop offset="0.55" stopColor="var(--color-primary)" />
+          <stop offset="1" stopColor="var(--color-secondary)" />
+        </radialGradient>
+        <linearGradient id={`${id}-sheen`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0.3" stopColor="var(--color-text)" stopOpacity="0" />
+          <stop offset="0.48" stopColor="var(--color-text)" stopOpacity="0.07" />
+          <stop offset="0.62" stopColor="var(--color-text)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <rect className="table-surface" x={g.x} y={g.y} width={g.w} height={g.h} rx={r} fill={`url(#${id}-top)`} />
+      <rect x={g.x} y={g.y} width={g.w} height={g.h} rx={r} fill={`url(#${id}-sheen)`} />
+      {/* Gold inlay, set in from the edge. */}
+      <rect
+        className="table-inlay"
+        x={g.x + inset}
+        y={g.y + inset}
+        width={g.w - inset * 2}
+        height={g.h - inset * 2}
+        rx={r - inset}
+        fill="none"
+        stroke="var(--color-gold)"
+        strokeOpacity="0.45"
+        strokeWidth="1"
+      />
       <rect
         className="table-top"
         x={g.x}
@@ -85,14 +117,10 @@ export function Table({
       <path className="table-head" d={head} fill="none" stroke="var(--color-gold)" strokeWidth="3" />
       <g className="seats">
         {seats.map((s, i) => (
-          <circle
-            key={i}
-            className={`seat ${i < lit ? "is-lit" : ""}`}
-            data-i={i}
-            cx={s.x}
-            cy={s.y}
-            r={seatR}
-          />
+          <g key={i} className={`seat-g ${i < lit ? "is-lit" : ""}`}>
+            <circle className="seat-ring" cx={s.x} cy={s.y} r={seatR + 5} />
+            <circle className={`seat ${i < lit ? "is-lit" : ""}`} data-i={i} cx={s.x} cy={s.y} r={seatR} />
+          </g>
         ))}
       </g>
     </svg>

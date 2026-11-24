@@ -237,11 +237,20 @@ button {
 .lk-rule .lk-in {
   transform-origin: 51.6% 87.1%;
 }
+/* Seats are place settings: a ring, filled when taken. */
 .seat {
-  fill: color-mix(in oklab, var(--color-gold-light) 28%, transparent);
+  fill: color-mix(in oklab, var(--color-gold-light) 18%, transparent);
 }
 .seat.is-lit {
   fill: var(--color-gold-light);
+}
+.seat-ring {
+  fill: none;
+  stroke: color-mix(in oklab, var(--color-gold-light) 30%, transparent);
+  stroke-width: 1;
+}
+.seat-g.is-lit .seat-ring {
+  stroke: color-mix(in oklab, var(--color-gold-light) 55%, transparent);
 }
 
 /* ===========================================================================
@@ -386,29 +395,48 @@ button {
   }
 }
 
-/* [03] The gold rule strikes out what this is not, then becomes the table. */
-.strike {
-  position: absolute;
-  left: -0.08em;
-  right: -0.08em;
-  top: 54%;
-  height: 2px;
-  background: var(--color-gold);
-  transform-origin: 0 50%;
+/* [03] What it is not passes through one line; at rest (phones, reduced motion) all three stack. */
+.dist-not {
+  color: color-mix(in oklab, var(--color-text) 55%, var(--color-primary));
 }
-.dist-table {
-  position: absolute;
-  left: -4vw;
-  right: -30vw;
-  bottom: -0.06em;
-  height: 1px;
-  background: linear-gradient(90deg, var(--color-gold) 70%, transparent);
-  transform-origin: 0 50%;
+.dist-lines.is-slot {
+  position: relative;
+  height: 1.12em;
+  overflow: hidden;
 }
-/* Struck lines rest at a level that still passes 3:1 for large text. */
-.dist-l1,
-.dist-l2 {
-  opacity: 0.5;
+.dist-lines.is-slot .dist-line {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+}
+.dist-slit {
+  transform-origin: 50% 50%;
+}
+
+/* Photography in the house grade (see GradedImage). */
+.graded {
+  background: var(--color-secondary);
+}
+.graded-img {
+  filter: grayscale(1) contrast(1.15) brightness(1.02);
+}
+.graded-tint {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 40%, color-mix(in oklab, var(--color-secondary) 55%, transparent)),
+    var(--color-primary);
+  mix-blend-mode: multiply;
+  opacity: 0.62;
+  pointer-events: none;
+}
+.graded::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(80% 60% at 50% 35%, color-mix(in oklab, var(--color-gold-light) 22%, transparent), transparent 70%);
+  mix-blend-mode: soft-light;
+  pointer-events: none;
 }
 
 /* A lockup that assembles on scroll (08) skips the load-time assembly. */
@@ -433,4 +461,53 @@ button {
 }
 .site-nav[data-scrolled="true"]::before {
   opacity: 1;
+}
+
+/* Paper-white sections: contrast against the green and black, text in green. */
+.paper {
+  background: var(--color-text) !important;
+  color: var(--color-primary);
+}
+.paper ::selection {
+  background: var(--color-primary);
+  color: var(--color-text);
+}
+.portrait-ground {
+  background:
+    radial-gradient(90% 70% at 30% 20%, var(--color-primary-raised), transparent 70%),
+    var(--color-primary);
+}
+.portrait-slot::before {
+  content: "";
+  position: absolute;
+  inset: 1rem;
+  border: 1px solid var(--color-hairline);
+  pointer-events: none;
+}
+
+/* Biography: zooms out of the card's plane. Native <dialog> gives focus trap and Esc. */
+.bio-dialog {
+  width: min(64rem, calc(100vw - 2rem));
+  max-height: 88svh;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: var(--color-text);
+  color: var(--color-primary);
+  overflow: hidden;
+}
+.bio-dialog::backdrop {
+  background: color-mix(in oklab, var(--color-secondary) 82%, transparent);
+}
+.bio-dialog[open] {
+  animation: bio-zoom 0.7s var(--ease-out-expo);
+}
+.bio-dialog[open]::backdrop {
+  animation: fade-in 0.5s ease-out;
+}
+@keyframes bio-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(16px);
+  }
 }

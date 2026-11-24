@@ -1,6 +1,6 @@
 # The India Table — project memory
 
-Marketing site for The India Table, a curated, invitation-only, closed-door leadership forum connecting India's next-generation industrialists and founders with Union Ministers, senior policymakers and public leaders. Audience: elite (industrialists, founders, policymakers and their offices). Full build brief: `docs/claude-code-prompt.md`. Source material: `docs/*.pdf`.
+Marketing site for The India Table, a curated, invitation-only, closed-door leadership forum connecting India's established industrialists, business leaders and investors with Union Ministers, senior policymakers and public leaders. Audience: elite (industrialists, founders, policymakers and their offices). Full build brief: `docs/claude-code-prompt.md`. Source material: `docs/*.pdf`.
 
 ## Feel
 Apple-level control + Ditchley institutional restraint + Stripe Press editorial calm. Not a conference site. One idea per screen, huge serif type, scroll-driven slow motion, one hook per section. Discretion is the hook: never reveal names, dates or guest lists.

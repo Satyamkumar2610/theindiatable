@@ -63,7 +63,7 @@ export function Room() {
   });
 
   return (
-    <Section ref={root} stage={stage} ground="black" className="py-28 lg:py-40">
+    <Section ref={root} stage={stage} ground="black" className="py-40 lg:py-56">
       <div className={container}>
         <RunningHead stage={stage} />
         <div className="mt-10 grid gap-8 lg:grid-cols-12 lg:items-end">
@@ -83,7 +83,7 @@ export function Room() {
           {room.segments.map((s, i) => (
             <span
               key={s}
-              className={`room-seg label absolute max-w-[18ch] text-text-soft ${["top-0 left-[18%]", "top-0 right-[10%] text-right", "bottom-0 left-[18%]", "bottom-0 right-[10%] text-right"][i]}`}
+              className={`room-seg label absolute whitespace-nowrap text-text-soft ${["top-0 left-[18%]", "top-0 right-[10%] text-right", "bottom-0 left-[18%]", "bottom-0 right-[10%] text-right"][i]}`}
             >
               {s}
             </span>

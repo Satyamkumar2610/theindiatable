@@ -27,10 +27,10 @@ export const brand = {
   name: "The India Table",
   tagline: "A Leadership Forum",
   title: "The India Table — A Leadership Forum",
+  /** AUDIENCE PIVOT (user direction, 2026-11-24): established leaders, not young leaders. Client to approve wording. */
   description:
-    "A curated, high-trust forum where India's most influential young leaders meet the policymakers and public leaders shaping the country today.",
-  footerLine:
-    "Connecting the generation shaping India's aspirations with the people shaping India's future.",
+    "A curated, high-trust forum where India's industrialists, business leaders and investors meet the policymakers and public leaders shaping the country.",
+  footerLine: "Connecting the people building India's economy with the people shaping its policy.",
   sealRing: "THE INDIA TABLE · BY INVITATION · A LEADERSHIP FORUM · ",
   /** TODO: client to supply the public contact address. Not rendered while it starts with TODO. */
   contactEmail: "TODO: contact email",
@@ -71,8 +71,9 @@ export const arrival = {
   },
   /** Which headline renders. Brief: A by default. */
   headline: "A" as "A" | "B",
+  /** AUDIENCE PIVOT: client to approve. */
   subline:
-    "A curated, high-trust forum where India's most influential young leaders meet the policymakers and public leaders shaping the country today.",
+    "A curated, high-trust forum where India's industrialists, business leaders and investors meet the policymakers and public leaders shaping the country.",
   cta: { label: "Request an invitation", href: "/invitation" },
   secondary: { label: "Discover the idea", href: "#idea" },
   /** Interface cue on desktop, not client copy. */
@@ -81,12 +82,13 @@ export const arrival = {
 
 export const idea = {
   headline: "Two constituencies. One room.",
+  /** AUDIENCE PIVOT: rewritten from the concept note's "generation" framing. Client to approve. */
   manifesto:
-    "The India Table puts the generation shaping India's aspirations in the same room as the people shaping India's policies, giving policymakers a direct window into the ideas and ambitions of India's emerging generation, and giving young leaders a deeper understanding of the decisions that will shape the environment in which they build.",
+    "The India Table puts the people building India's enterprises in the same room as the people shaping India's policies, giving policymakers a direct window into the ambitions and realities of Indian business, and giving business leaders a deeper understanding of the decisions that will shape the environment in which they build.",
   pullQuote:
-    "The idea is simple: put the generation shaping India's aspirations in the same room as the people shaping India's policies.",
-  /** The two constituencies, as the concept note names them. Used as the two sides of the mark in 02. */
-  sides: ["The generation shaping India's aspirations", "The people shaping India's policies"],
+    "The idea is simple: put the people building India's enterprises in the same room as the people shaping India's policies.",
+  /** The two constituencies. Used as the two sides of the mark in 02. */
+  sides: ["The people building India's enterprises", "The people shaping India's policies"],
   /** Structural credit linking to the founders (interface copy; names come from people.founders). */
   creditLabel: "Convened by the founding team",
 } as const;
@@ -96,7 +98,8 @@ export const distinction = {
   principles: [
     {
       title: "Influence, not titles",
-      body: "A carefully selected cohort of next-generation industrialists, founders, entrepreneurs, business leaders and youth-facing voices who are already building, influencing or shaping the India of tomorrow.",
+      /** AUDIENCE PIVOT: client to approve. */
+      body: "A carefully selected cohort of industrialists, business leaders, investors and founders who are already building, financing and shaping India's economy.",
     },
     {
       title: "Direct, candid conversation",
@@ -104,7 +107,8 @@ export const distinction = {
     },
     {
       title: "A two-way exchange",
-      body: "Policymakers gain a direct window into young India's ambitions and realities; young leaders gain access to decision-makers and a deeper understanding of policy and national priorities.",
+      /** AUDIENCE PIVOT: client to approve. */
+      body: "Policymakers gain a direct window into the ambitions and realities of Indian enterprise; business leaders gain access to decision-makers and a deeper understanding of policy and national priorities.",
     },
     {
       title: "A network, not a guest list",
@@ -116,11 +120,12 @@ export const distinction = {
 
 export const room = {
   headline: "The quality of the room is the point.",
-  body: "Each Table brings together 20–30 exceptional young leaders who are building companies, creating jobs, driving technology, shaping culture and increasingly influencing the aspirations of India's youth, selected through a highly curated process.",
+  /** AUDIENCE PIVOT: client to approve. */
+  body: "Each Table brings together 20–30 established leaders who are building companies, creating jobs, deploying capital and driving technology, selected through a highly curated process.",
   number: { from: 20, to: 30, display: "20–30" },
   numberLabel: "participants per Table",
-  /** §8 list. (§6 table lists "Founders · Industry · Policy · Public life"; §8 is the content source.) */
-  segments: ["Founders", "Industry", "Finance & technology", "Culture & youth-facing voices"],
+  /** AUDIENCE PIVOT (user's own list: industrialists, business leaders, investors). Client to approve. */
+  segments: ["Industrialists", "Business leaders", "Investors", "Founders"],
   link: { label: "How participants are selected", href: "/principles#selection" },
 } as const;
 
@@ -150,9 +155,10 @@ export const conversation = {
 } as const;
 
 export const beyond = {
-  headline: "A bridge to young India.",
-  body: "Over time, The India Table can become a structured bridge between government and India's emerging generation of influential leaders: an ongoing channel to the people who shape the aspirations, conversations and choices of millions of young Indians, and a credible network that can contribute to youth initiatives, leadership programmes, consultations and international youth leadership dialogues.",
-  line: "A room India's most promising young leaders genuinely want to be in, because the people around the table matter.",
+  /** AUDIENCE PIVOT: rewritten from "a bridge to young India". Client to approve. */
+  headline: "A lasting bridge between enterprise and government.",
+  body: "Over time, The India Table can become a structured bridge between government and the leaders building India's economy: an ongoing channel to the people who create jobs, deploy capital and build industries, and a credible network that can contribute to consultations, policy dialogue and international economic exchange.",
+  line: "A room India's most serious business leaders genuinely want to be in, because the people around the table matter.",
 } as const;
 
 export type Founder = {
@@ -160,11 +166,15 @@ export type Founder = {
   name: string;
   oneLiner: string;
   bio: string[];
+  /** Path under /public. TODO: client to supply portraits; until then the card shows initials. */
+  portrait?: string;
 };
 
 export const people = {
   headline: "The founding team.",
   link: { label: "Meet the founders", href: "/people" },
+  readBio: "Read biography",
+  closeBio: "Close",
   /** TODO: client to supply the institutional intent paragraph for /people. */
   intent: "TODO: institutional intent paragraph",
   /** TODO: client to approve final bio wording before launch. */
@@ -223,7 +233,7 @@ export const pending = {
   cadence: "TODO: how often Tables are convened",
   governmentSeats: "TODO: how many senior voices sit at each Table",
   afterRequest: "TODO: what happens after a request, and when",
-  sublineTone: "TODO: client to approve softening 'most influential' in the subline (reader found it self-congratulatory)",
+  audiencePivot: "TODO: client to approve the copy rewritten for established leaders (marked AUDIENCE PIVOT)",
 } as const;
 
 export const principlesPage = {

@@ -1,17 +1,25 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRef } from "react";
+import { GradedImage } from "@/components/ui/GradedImage";
 import { RunningHead } from "@/components/ui/RunningHead";
 import { Section, container } from "@/components/ui/Section";
 import { distinction, stages } from "@/content/site";
+import { tokens } from "@/lib/tokens";
 import { useMotion } from "@/lib/use-motion";
+import boardroom from "@/public/images/boardroom.jpg";
+
+// Below the fold: React Bits Spotlight Card loads as its own chunk; the cards still render on the server.
+const SpotlightCard = dynamic(() => import("@/components/reactbits/SpotlightCard"));
 
 /** "Not a conference." / "Not a panel." / "A table." */
 const LINES = distinction.headline.split(/(?<=\.)\s/);
 
 /**
- * [03] The Distinction. The gold rule strikes out what this is not, then
- * becomes the table "A table." sits on.
+ * [03] The Distinction. What it is not passes through a single line, while a
+ * gold slit waits beside it like a door ajar. "A table." arrives and the slit
+ * opens onto the room.
  */
 export function Distinction() {
   const root = useRef<HTMLElement>(null);
@@ -19,37 +27,51 @@ export function Distinction() {
 
   useMotion(root, (el, { gsap }, c) => {
     const q = gsap.utils.selector(el);
-    const scene = q(".dist-stage")[0];
+    const lines = q(".dist-line") as HTMLElement[];
+    const slot = q(".dist-lines")[0] as HTMLElement;
+
     if (c.desktop) {
+      slot.classList.add("is-slot");
+      gsap.set(lines.slice(1), { yPercent: 115 });
+      gsap.set(lines, { opacity: 1 });
       gsap
         .timeline({
           defaults: { ease: "none" },
-          scrollTrigger: { trigger: scene, start: "top top", end: "bottom bottom", scrub: 1 },
+          scrollTrigger: { trigger: q(".dist-stage")[0], start: "top top", end: "bottom bottom", scrub: 1 },
         })
-        .fromTo(q(".strike-1"), { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power2.inOut" }, 0.05)
-        .fromTo(q(".dist-l1"), { opacity: 1 }, { opacity: 0.5, duration: 0.12 }, 0.2)
-        .fromTo(q(".strike-2"), { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power2.inOut" }, 0.32)
-        .fromTo(q(".dist-l2"), { opacity: 1 }, { opacity: 0.5, duration: 0.12 }, 0.47)
-        .fromTo(q(".dist-l3"), { autoAlpha: 0, yPercent: 30 }, { autoAlpha: 1, yPercent: 0, duration: 0.2, ease: "power3.out" }, 0.6)
-        .fromTo(q(".dist-table"), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power2.inOut" }, 0.68)
+        .fromTo(q(".dist-slit"), { scaleX: 0 }, { scaleX: 1, duration: 0.14, ease: "power2.inOut" }, 0.04)
+        .to(lines[0], { yPercent: -115, duration: 0.1, ease: "power2.inOut" }, 0.26)
+        .to(lines[1], { yPercent: 0, duration: 0.1, ease: "power2.inOut" }, 0.26)
+        .to(lines[1], { yPercent: -115, duration: 0.1, ease: "power2.inOut" }, 0.48)
+        .to(lines[2], { yPercent: 0, duration: 0.1, ease: "power2.inOut" }, 0.48)
+        .fromTo(
+          q(".dist-window"),
+          { clipPath: "inset(50% 0% 50% 0%)" },
+          { clipPath: "inset(0% 0% 0% 0%)", duration: 0.32, ease: "power3.inOut" },
+          0.52,
+        )
+        .fromTo(q(".dist-window img"), { scale: 1.3 }, { scale: 1, duration: 0.42, ease: "power2.out" }, 0.52)
+        .to(q(".dist-slit"), { autoAlpha: 0, duration: 0.06 }, 0.58)
         .to({}, { duration: 0.1 });
-    } else {
-      gsap
-        .timeline({ scrollTrigger: { trigger: scene, start: "top 65%" } })
-        .from(q(".strike-1"), { scaleX: 0, duration: 0.7, ease: "power2.inOut" })
-        .fromTo(q(".dist-l1"), { opacity: 1 }, { opacity: 0.5, duration: 0.4 })
-        .from(q(".strike-2"), { scaleX: 0, duration: 0.7, ease: "power2.inOut" })
-        .fromTo(q(".dist-l2"), { opacity: 1 }, { opacity: 0.5, duration: 0.4 })
-        .from(q(".dist-l3"), { autoAlpha: 0, y: 20, duration: 0.8, ease: "power3.out" })
-        .from(q(".dist-table"), { scaleX: 0, duration: 0.8, ease: "power2.inOut" }, "<0.2");
+      return () => slot.classList.remove("is-slot");
     }
 
-    // Principles: the shared quiet reveal (y 12, opacity, 0.7s, power2.out, top 85%).
-    q(".principle").forEach((row: Element) =>
-      gsap.from(row, { y: 12, autoAlpha: 0, duration: 0.7, ease: "power2.out", scrollTrigger: { trigger: row, start: "top 85%" } }),
-    );
+    gsap
+      .timeline({ scrollTrigger: { trigger: q(".dist-window")[0], start: "top 80%" } })
+      .fromTo(q(".dist-window"), { clipPath: "inset(50% 0% 50% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.4, ease: "power3.inOut" })
+      .fromTo(q(".dist-window img"), { scale: 1.25 }, { scale: 1, duration: 1.8, ease: "power2.out" }, 0);
+  });
 
-    // Closing line: three refusals, landing one by one.
+  useMotion(root, (el, { gsap }) => {
+    const q = gsap.utils.selector(el);
+    gsap.from(q(".principle"), {
+      y: 24,
+      autoAlpha: 0,
+      duration: 0.9,
+      ease: "power2.out",
+      stagger: 0.12,
+      scrollTrigger: { trigger: q(".principles")[0], start: "top 80%" },
+    });
     gsap.fromTo(
       q(".close-w"),
       { opacity: 0.18 },
@@ -57,7 +79,6 @@ export function Distinction() {
         opacity: 1,
         stagger: 0.3,
         ease: "none",
-        // Full strength until it enters the viewport; the dim state exists only while being read.
         immediateRender: false,
         scrollTrigger: { trigger: q(".dist-close")[0], start: "top bottom", end: "center 45%", scrub: true },
       },
@@ -66,38 +87,60 @@ export function Distinction() {
 
   return (
     <Section ref={root} stage={stage} ground="green">
-      <div className="dist-stage relative lg:h-[200vh]">
-        <div className="flex min-h-svh flex-col justify-center py-28 lg:sticky lg:top-0 lg:h-svh lg:py-0">
-          <div className={container}>
-            <RunningHead stage={stage} />
-            <h2 id="distinction-title" className="mt-10 font-display text-text">
-              {LINES.slice(0, 2).map((l, i) => (
-                <span key={l} className={`dist-l${i + 1} relative block w-fit text-h2 text-text-soft`}>
-                  {l}
-                  <span className={`strike strike-${i + 1}`} aria-hidden="true" />
-                </span>
-              ))}
-              <span className="dist-l3 relative mt-[0.12em] block w-fit text-[clamp(4.5rem,13vw,12rem)] leading-none">
-                {LINES[2]}
-                <span className="dist-table" aria-hidden="true" />
-              </span>
-            </h2>
+      <div className="dist-stage relative lg:h-[260vh]">
+        <div className="py-32 lg:sticky lg:top-0 lg:flex lg:h-svh lg:items-center lg:py-0">
+          <div className={`${container} grid gap-16 lg:grid-cols-12 lg:items-center lg:gap-10`}>
+            <div className="lg:col-span-7">
+              <RunningHead stage={stage} />
+              <h2 id="distinction-title" className="sr-only">
+                {distinction.headline}
+              </h2>
+              <p className="dist-lines mt-10 font-display text-[clamp(2.75rem,5.4vw,5.75rem)] leading-[1.06] text-text lg:whitespace-nowrap" aria-hidden="true">
+                {LINES.map((l, i) => (
+                  <span key={l} className={`dist-line block ${i < 2 ? "dist-not" : ""}`}>
+                    {l}
+                  </span>
+                ))}
+              </p>
+            </div>
+
+            <div className="relative lg:col-span-5 lg:col-start-8 xl:col-span-4 xl:col-start-9">
+              <span className="dist-slit absolute inset-x-0 top-1/2 z-10 hidden h-px bg-gold lg:block" aria-hidden="true" />
+              <GradedImage
+                src={boardroom}
+                alt="A long boardroom table set with chairs, empty, in perspective."
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                placeholder="blur"
+                className="dist-window aspect-[4/5] w-full"
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className={`${container} pb-28 lg:pb-40`}>
-        <ul className="border-t border-hairline">
+      <div className={`${container} pt-12 pb-40 lg:pb-56`}>
+        <ul className="principles grid gap-px bg-hairline md:grid-cols-2">
           {distinction.principles.map((p) => (
-            <li key={p.title} className="principle grid gap-4 border-b border-hairline py-10 md:grid-cols-12 md:gap-10 md:py-14">
-              <h3 className="text-[clamp(1.6rem,2.6vw,2.25rem)] leading-[1.15] text-text md:col-span-5">{p.title}</h3>
-              <p className="measure text-text-soft md:col-span-6 md:col-start-7">{p.body}</p>
+            <li key={p.title} className="principle">
+              <SpotlightCard
+                theme="light"
+                spotlightColor={tokens.gold}
+                intensity={0.9}
+                spotlightSize={320}
+                borderGlow={0}
+                className="h-full p-10 md:p-14 lg:min-h-[22rem]"
+                style={{ ["--spotlight-card-surface" as string]: "var(--color-text)", ["--spotlight-card-border" as string]: "transparent" }}
+              >
+                <h3 className="max-w-[16ch] text-[clamp(1.75rem,2.6vw,2.4rem)] leading-[1.1] text-primary">{p.title}</h3>
+                <span className="mt-8 block h-px w-10 bg-gold" aria-hidden="true" />
+                <p className="mt-8 max-w-[42ch] text-primary-raised">{p.body}</p>
+              </SpotlightCard>
             </li>
           ))}
         </ul>
       </div>
 
-      <div className={`dist-close ${container} flex min-h-[70svh] items-center justify-center pb-24 text-center`}>
+      <div className={`dist-close ${container} flex min-h-[80svh] items-center justify-center pb-32 text-center`}>
         <p className="font-display text-[clamp(2.4rem,6vw,5.5rem)] leading-[1.08] text-text">
           {distinction.closing.split(/(?<=\.)\s/).map((w) => (
             <span key={w} className="close-w block">

@@ -86,7 +86,7 @@ export function Idea() {
         </div>
       </div>
 
-      <div className={`${container} pb-32 lg:pb-48`}>
+      <div className={`${container} pt-16 pb-40 lg:pb-56`}>
         <p className="idea-manifesto mx-auto max-w-[30ch] font-display text-[clamp(1.6rem,2.7vw,2.5rem)] leading-[1.3] text-text">
           {idea.manifesto.split(" ").map((w, i) => (
             <span key={i} className="rw">
@@ -96,22 +96,24 @@ export function Idea() {
         </p>
       </div>
 
-      <figure className={`${container} flex min-h-[80svh] flex-col items-center justify-center border-t border-hairline/60 py-28 text-center`}>
-        <span className="h-px w-12 bg-gold" aria-hidden="true" />
-        <blockquote className="mt-10 max-w-[24ch] font-display text-[clamp(1.9rem,3.8vw,3.4rem)] leading-[1.18] text-text">
-          {idea.pullQuote}
-        </blockquote>
-        <figcaption className="mt-12 flex flex-col items-center gap-4">
-          <span className="stage-label">{idea.creditLabel}</span>
-          <span className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-            {people.founders.map((f) => (
-              <a key={f.slug} href="#people" className="text-link label">
-                {f.name}
-              </a>
-            ))}
-          </span>
-        </figcaption>
-      </figure>
+      <div className="paper border-t border-hairline">
+        <figure className={`${container} flex min-h-[90svh] flex-col items-center justify-center py-40 text-center`}>
+          <span className="h-px w-12 bg-gold" aria-hidden="true" />
+          <blockquote className="mt-12 max-w-[22ch] font-display text-[clamp(2.1rem,4.4vw,4rem)] leading-[1.14] text-primary">
+            {idea.pullQuote}
+          </blockquote>
+          <figcaption className="mt-14 flex flex-col items-center gap-4">
+            <span className="stage-label !text-primary-raised">{idea.creditLabel}</span>
+            <span className="flex flex-wrap justify-center gap-x-8 gap-y-2">
+              {people.founders.map((f) => (
+                <a key={f.slug} href="#people" className="text-link label !text-primary hover:!text-primary-raised">
+                  {f.name}
+                </a>
+              ))}
+            </span>
+          </figcaption>
+        </figure>
+      </div>
     </Section>
   );
 }
