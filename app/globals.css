@@ -293,7 +293,7 @@ button {
 @media (min-width: 64rem) {
   .arrival {
     /* Height-aware: the pinned scene is exactly one screen tall, so it scales with the shorter side. */
-    --lockup-w: clamp(16rem, min(30vw, 40svh), 30rem);
+    --lockup-w: clamp(12rem, min(28vw, 32svh), 28rem);
   }
 }
 .arrival-lockup {
@@ -302,7 +302,7 @@ button {
 }
 @media (min-width: 64rem) {
   .arrival-title {
-    font-size: clamp(3rem, min(9vw, 13.5svh), 9.5rem);
+    font-size: clamp(3rem, min(9vw, 11.5svh), 9.5rem);
   }
 }
 /* --silk is driven by the scroll on the section (Arrival), so it applies even before the canvas mounts. */
@@ -354,11 +354,11 @@ button {
   .arrival-after {
     animation: rise-in 1.2s var(--ease-out-expo) 2s backwards;
   }
+  /* In the flow, under the content: on a short screen it moves down (and out of view), never over the action. */
   .arrival-cue {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    translate: -50% 0;
+    position: relative;
+    flex: none;
+    padding-bottom: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
