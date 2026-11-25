@@ -11,6 +11,8 @@ Mode: Persuade. Audience: industrialists, founders, policymakers and their offic
 
 User steer (2026-11-24, after the direction round; second steer the same day: the gate needs more style, detailing and a visual hook; keep the silk; third steer after a four-role critique (UI designer, target user, art director, supervisor): the doors read sloppy, logo not evident, storify every section): no lattice or patterned "prints" (read as cliché); clean, premium, elite; ScrollTrigger + Lenis with a hook throughout that makes the visitor want to engage; royal green, black, white and shiny gold, anything else only in support. References supplied: a green-and-gold doorway hero, green panels opening onto a view; their stock-photo and template layouts are not the bar.
 
+Fourth steer (2026-11-25): the SVG table (04, 05) read as AI-generated clip-art and the dotted horizon (06) as stale; GSAP/Lenis/React Bits use was not evident and scrolling lacked smoothness. User chose photography-led for 04–06: CC0 illustrative photographs in the house grade, carried by scrubbed clip-path, dolly and wipe motion. Pins replaced by CSS sticky scenes; Lenis lerp with `scrub: true`.
+
 ## Direction contract
 
 THESIS: The logo is the film. One gold seat (the figure's head), a table (the lockup's rule), two T's as the threshold. Each section changes the state of that one object once, so the brand is the story. It refuses the conference template and ornament: no doors, panels, lattice or photography.

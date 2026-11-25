@@ -1,65 +1,80 @@
 "use client";
 
 import { useRef } from "react";
+import { GradedImage } from "@/components/ui/GradedImage";
 import { RunningHead } from "@/components/ui/RunningHead";
 import { Section, container } from "@/components/ui/Section";
 import { beyond, stages } from "@/content/site";
 import { useMotion } from "@/lib/use-motion";
-
-/** Seats sitting on the table's edge, spread from the centre (fractions of half-width). */
-const SEATS = [-0.42, -0.3, -0.19, -0.09, 0, 0.09, 0.19, 0.3, 0.42];
+import colonnade from "@/public/images/colonnade.jpg";
 
 /**
- * [06] Beyond the Table. The table's edge runs out past both sides of the
- * screen and becomes a horizon; the seats travel outward with it. The network
- * continues beyond any one gathering.
+ * [06] Beyond the Table. A colonnade that runs on past the frame: as the
+ * visitor scrolls through it the camera walks forward towards the vanishing
+ * point, and the headline rises line by line out of the stone. What lasts is
+ * the walk, not the gathering.
  */
 export function Beyond() {
   const root = useRef<HTMLElement>(null);
   const stage = stages[5];
 
-  useMotion(root, (el, { gsap }) => {
+  useMotion(root, (el, { gsap, SplitText }) => {
     const q = gsap.utils.selector(el);
-    const tl = gsap.timeline({
-      defaults: { ease: "none" },
-      scrollTrigger: { trigger: q(".horizon")[0], start: "top 85%", end: "bottom 15%", scrub: 1 },
+    const band = q(".beyond-band")[0] as HTMLElement;
+
+    // The walk: a slow dolly towards the vanishing point, tied to the scroll.
+    gsap.fromTo(
+      q(".beyond-band .graded-img"),
+      { scale: 1.02, yPercent: -4 },
+      { scale: 1.32, yPercent: 4, ease: "none", scrollTrigger: { trigger: band, start: "top bottom", end: "bottom top", scrub: true } },
+    );
+
+    const split = SplitText.create(q(".beyond-title")[0], { type: "lines", mask: "lines", aria: "none" });
+    gsap
+      .timeline({ scrollTrigger: { trigger: band, start: "top 55%" } })
+      .from(split.lines, { yPercent: 110, duration: 1.3, stagger: 0.12, ease: "expo.out" })
+      .from(q(".beyond-rule"), { scaleX: 0, duration: 1.2, ease: "expo.out" }, 0.35);
+
+    gsap.from(q(".beyond-copy > *"), {
+      autoAlpha: 0,
+      y: 16,
+      duration: 1,
+      stagger: 0.12,
+      ease: "power2.out",
+      scrollTrigger: { trigger: q(".beyond-copy")[0], start: "top 82%" },
     });
-    tl.fromTo(q(".horizon-line"), { scaleX: 0.28 }, { scaleX: 1, duration: 1, ease: "power2.inOut" }, 0);
-    q(".horizon-seat").forEach((s: HTMLElement) => {
-      const f = Number(s.dataset.f);
-      tl.fromTo(
-        s,
-        { x: 0 },
-        { x: () => f * window.innerWidth * 1.4, opacity: Math.abs(f) > 0.25 ? 0 : 0.35, duration: 1, ease: "power2.in" },
-        0,
-      );
-    });
+
+    return () => split.revert();
   });
 
   return (
-    <Section ref={root} stage={stage} ground="black" className="overflow-hidden py-40 lg:py-56">
-      <div className={container}>
-        <RunningHead stage={stage} />
-        <h2 id="beyond-title" className="mx-auto mt-16 max-w-[18ch] text-center font-display text-[clamp(2.75rem,6vw,6rem)] leading-[1.04] text-text">
-          {beyond.headline}
-        </h2>
+    <Section ref={root} stage={stage} ground="black" className="overflow-hidden">
+      <div className="beyond-band relative isolate flex h-[92svh] items-center overflow-hidden lg:h-[118svh]">
+        <GradedImage
+          src={colonnade}
+          alt={beyond.imageAlt}
+          fill
+          sizes="100vw"
+          placeholder="blur"
+          className="beyond-photo !absolute inset-0 -z-10 h-full w-full"
+        />
+        <span className="beyond-shade pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
+
+        <div className={`${container} text-center`}>
+          <RunningHead stage={stage} />
+          <h2
+            id="beyond-title"
+            className="beyond-title mx-auto mt-12 max-w-[18ch] font-display text-h2 text-text"
+          >
+            {beyond.headline}
+          </h2>
+          <span className="beyond-rule mx-auto mt-12 block h-px w-24 bg-gold" aria-hidden="true" />
+        </div>
       </div>
 
-      <div className="horizon relative my-20 h-24 lg:my-28" aria-hidden="true">
-        <span className="horizon-line absolute top-1/2 left-0 h-px w-full bg-[linear-gradient(90deg,transparent,var(--color-gold)_20%,var(--color-gold)_80%,transparent)]" />
-        {SEATS.map((f) => (
-          <span
-            key={f}
-            data-f={f}
-            className="horizon-seat absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-[calc(50%+14px)] rounded-full bg-gold-light"
-            style={{ left: `${50 + f * 50}%` }}
-          />
-        ))}
-      </div>
-
-      <div className={`${container} grid gap-16 lg:grid-cols-12`}>
-        <p className="text-text-soft lg:col-span-6 lg:col-start-2 lg:max-w-[52ch]">{beyond.body}</p>
-        <p className="font-display text-[clamp(1.6rem,2.6vw,2.4rem)] leading-[1.25] text-text lg:col-span-4 lg:col-start-8">
+      <div className={`beyond-copy ${container} grid gap-16 py-32 lg:grid-cols-12 lg:py-48`}>
+        <p className="text-text-soft lg:col-span-6 lg:max-w-[52ch]">{beyond.body}</p>
+        <p className="font-display text-lede text-text lg:col-span-5 lg:col-start-8">
           {beyond.line}
         </p>
       </div>

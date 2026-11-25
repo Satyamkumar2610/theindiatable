@@ -1,5 +1,6 @@
 import { forwardRef, type ReactNode } from "react";
 import type { Stage } from "@/content/site";
+import { SeamLine, SeamVeil } from "@/components/ui/Seam";
 
 export const container = "mx-auto w-full max-w-[75rem] px-6 md:px-10 xl:px-0";
 
@@ -17,9 +18,11 @@ export const Section = forwardRef<
       id={stage.id}
       aria-labelledby={`${stage.id}-title`}
       data-stage={stage.id}
-      className={`relative border-t border-hairline ${ground === "green" ? "bg-primary" : "bg-secondary"} ${className}`}
+      className={`relative ${ground === "green" ? "bg-primary" : "bg-secondary"} ${className}`}
     >
+      <SeamLine />
       {children}
+      <SeamVeil />
     </section>
   );
 });

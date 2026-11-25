@@ -52,10 +52,16 @@ function LenisBridge() {
   return null;
 }
 
+/**
+ * A continuous glide (lerp), not a fixed-duration ease that restarts on every
+ * wheel tick: it reads as one long, even motion on mouse wheels and trackpads.
+ * Lenis is the only smoothing layer: every ScrollTrigger uses `scrub: true`,
+ * so scenes follow it exactly instead of lagging behind a second catch-up.
+ */
 const lenisOptions = {
   autoRaf: false,
-  duration: 1.2,
-  easing: (t: number) => Math.min(1, 1.001 - 2 ** (-10 * t)),
+  lerp: 0.085,
+  wheelMultiplier: 0.9,
   syncTouch: false,
 };
 

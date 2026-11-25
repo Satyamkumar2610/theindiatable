@@ -59,7 +59,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       lang="en-IN"
       className={`${caslon.variable} ${montserrat.variable} ${hanken.variable}`}
     >
-      <body>
+      {/* Browser extensions (e.g. ColorZilla's cz-shortcut-listen) inject attributes on <body> before hydration. */}
+      <body suppressHydrationWarning>
         <a
           href="#main"
           className="label sr-only z-[100] bg-gold px-4 py-3 text-primary focus:not-sr-only focus:fixed focus:top-3 focus:left-3"

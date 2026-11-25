@@ -66,12 +66,12 @@ export function Engagement() {
         <div className="arrival-vignette absolute inset-0" />
       </div>
 
-      <div className={`${container} flex min-h-svh flex-col items-center justify-center py-40 text-center lg:py-56`}>
+      <div className={`${container} flex min-h-svh flex-col items-center justify-center py-32 text-center lg:py-36`}>
         <RunningHead stage={stage} />
-        <LockupMark className="lockup--static mt-14 w-[min(70vw,24rem)]" />
+        <LockupMark className="lockup--static mt-10 w-[min(60vw,17rem)]" />
 
-        <div className="eng-copy mt-16 flex flex-col items-center">
-          <h2 id="engagement-title" className="font-display text-[clamp(3rem,8vw,7rem)] leading-[1.02] text-text">
+        <div className="eng-copy mt-12 flex flex-col items-center">
+          <h2 id="engagement-title" className="font-display text-h2 text-text">
             {engagement.headline}
           </h2>
           <p className="mt-8 max-w-[44ch] text-text-soft">{engagement.body}</p>

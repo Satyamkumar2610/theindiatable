@@ -1,70 +1,69 @@
 "use client";
 
 import { useRef } from "react";
-import { Table } from "@/components/motif/Table";
+import { GradedImage } from "@/components/ui/GradedImage";
 import { RunningHead } from "@/components/ui/RunningHead";
 import { Section, container } from "@/components/ui/Section";
-import { conversation, room, stages } from "@/content/site";
+import { room, stages } from "@/content/site";
 import { useMotion } from "@/lib/use-motion";
+import tableImg from "@/public/images/conference-table.jpg";
 
-function RoomNumber({ className = "", size }: { className?: string; size: string }) {
-  const [a, b] = room.number.display.split("–");
-  return (
-    <p className={`text-center ${className}`}>
-      <span className="sr-only">{room.number.display}</span>
-      <span className={`block font-display leading-none text-text ${size}`} aria-hidden="true">
-        <span className="count-a" aria-hidden="true">{a}</span>
-        <span className="count-b" aria-hidden="true">–{b}</span>
-      </span>
-      <span className="label mt-3 block text-gold-light">{room.numberLabel}</span>
-    </p>
-  );
-}
+const [FROM, TO] = room.number.display.split("–");
 
 /**
- * [04] The Room. The table from above: the head is the senior voices, the
- * seats fill from the head outward as the count rises to 20, then the room
- * resolves to its range, 20–30. No names: the empty seats are the point.
+ * [04] The Room. The photograph is the room: it opens from a narrow aperture
+ * to the full screen while the count climbs to 20 (React Bits Count Up
+ * pattern, driven by the scroll), then resolves to its range, 20–30. The four
+ * kinds of people in it settle along the bottom edge.
  */
 export function Room() {
   const root = useRef<HTMLElement>(null);
   const stage = stages[3];
-  useMotion(root, (el, { gsap }) => {
+
+  useMotion(root, (el, { gsap }, c) => {
     const q = gsap.utils.selector(el);
-    q(".room-table").forEach((wrap: Element) => {
-      const seats = (wrap as HTMLElement).querySelectorAll(".seat");
-      const lit = Array.from(seats).slice(0, room.number.from);
-      const rest = Array.from(seats).slice(room.number.from);
-      const countA = wrap.querySelector(".count-a") as HTMLElement | null;
-      const counter = { v: 0 };
-      if (countA) countA.textContent = "0";
+    const countA = q(".count-a")[0] as HTMLElement;
+    const counter = { v: 0 };
+    const write = () => (countA.textContent = String(Math.round(counter.v)));
+    const aperture = q(".room-aperture");
+    const img = q(".room-aperture .graded-img");
+    // While it counts, "20" stands alone at the centre; the group settles as "–30" arrives.
+    const countB = q(".count-b")[0] as HTMLElement;
+    const alone = () => countB.offsetWidth / 2;
+
+    if (c.desktop) {
       gsap
-        .timeline({ scrollTrigger: { trigger: wrap, start: "top 70%" } })
-        .from(wrap.querySelector(".table-top"), { autoAlpha: 0, duration: 0.8, ease: "power2.out" })
-        .from(wrap.querySelector(".table-head"), { autoAlpha: 0, duration: 0.8, ease: "power2.out" }, 0.2)
-        .from(lit, { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%", duration: 0.5, stagger: 0.07, ease: "back.out(1.4)" }, 0.5)
-        .fromTo(
-          counter,
-          { v: 0 },
-          {
-            v: room.number.from,
-            duration: 0.07 * lit.length + 0.4,
-            ease: "none",
-            onUpdate: () => {
-              if (countA) countA.textContent = String(Math.round(counter.v));
-            },
-          },
-          0.5,
-        )
-        .from(wrap.querySelectorAll(".count-b"), { autoAlpha: 0, x: -12, duration: 0.6, ease: "power2.out" }, ">")
-        .from(rest, { autoAlpha: 0, duration: 0.6, stagger: 0.04, ease: "power2.out" }, "<")
-        .from(wrap.querySelectorAll(".room-seg"), { autoAlpha: 0, y: 8, duration: 0.7, stagger: 0.1, ease: "power2.out" }, "<0.2");
-    });
+        .timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: { trigger: q(".room-stage")[0], start: "top top", end: "bottom bottom", scrub: true },
+        })
+        .fromTo(aperture, { clipPath: "inset(26% 37% 26% 37%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.5, ease: "power2.inOut" }, 0)
+        .fromTo(img, { scale: 1.5 }, { scale: 1, duration: 0.62, ease: "power2.out" }, 0)
+        .fromTo(q(".room-shade"), { opacity: 0.35 }, { opacity: 1, duration: 0.4 }, 0.2)
+        .fromTo(counter, { v: 0 }, { v: room.number.from, duration: 0.48, ease: "power1.out", onUpdate: write }, 0.04)
+        .fromTo(q(".room-count"), { x: alone }, { x: 0, duration: 0.14, ease: "power2.inOut" }, 0.52)
+        .fromTo(q(".count-b"), { autoAlpha: 0, x: -24 }, { autoAlpha: 1, x: 0, duration: 0.12, ease: "power2.out" }, 0.54)
+        .fromTo(q(".room-unit"), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.12, ease: "power2.out" }, 0.6)
+        .fromTo(q(".room-ledger"), { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.2, ease: "power2.inOut" }, 0.66)
+        .fromTo(q(".room-seg"), { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.1, stagger: 0.035, ease: "power2.out" }, 0.7)
+        .to({}, { duration: 0.1 });
+      return;
+    }
+
+    gsap
+      .timeline({ scrollTrigger: { trigger: q(".room-stage")[0], start: "top 75%" } })
+      .fromTo(aperture, { clipPath: "inset(14% 18% 14% 18%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.6, ease: "expo.out" })
+      .fromTo(img, { scale: 1.3 }, { scale: 1, duration: 2.2, ease: "expo.out" }, 0)
+      .fromTo(counter, { v: 0 }, { v: room.number.from, duration: 1.4, ease: "power2.out", onUpdate: write }, 0.2)
+      .fromTo(q(".room-count"), { x: alone }, { x: 0, duration: 0.9, ease: "expo.inOut" }, 1.3)
+      .fromTo(q(".count-b"), { autoAlpha: 0, x: -16 }, { autoAlpha: 1, x: 0, duration: 0.8, ease: "expo.out" }, 1.4)
+      .fromTo(q(".room-unit"), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" }, 1.3)
+      .fromTo(q(".room-seg"), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.06, ease: "power2.out" }, 0.5);
   });
 
   return (
-    <Section ref={root} stage={stage} ground="black" className="py-40 lg:py-56">
-      <div className={container}>
+    <Section ref={root} stage={stage} ground="black">
+      <div className={`${container} pt-40 pb-20 lg:pt-56 lg:pb-28`}>
         <RunningHead stage={stage} />
         <div className="mt-10 grid gap-8 lg:grid-cols-12 lg:items-end">
           <h2 id="room-title" className="font-display text-h2 text-text lg:col-span-7">
@@ -72,32 +71,49 @@ export function Room() {
           </h2>
           <p className="measure text-text-soft lg:col-span-5">{room.body}</p>
         </div>
+      </div>
 
-        {/* Desktop and tablet: the table from above, number on the table top. */}
-        <div className="room-table relative mx-auto mt-16 hidden w-full max-w-[64rem] md:block lg:mt-24">
-          <Table orientation="landscape" lit={room.number.from} className="w-full" />
-          <RoomNumber className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" size="text-[clamp(3.5rem,7.5vw,7rem)]" />
-          <span className="room-seg label absolute top-[50%] left-0 -translate-y-1/2 text-gold-light">
-            {conversation.cards[2].label}
-          </span>
-          {room.segments.map((s, i) => (
-            <span
-              key={s}
-              className={`room-seg label absolute whitespace-nowrap text-text-soft ${["top-0 left-[18%]", "top-0 right-[10%] text-right", "bottom-0 left-[18%]", "bottom-0 right-[10%] text-right"][i]}`}
-            >
-              {s}
-            </span>
-          ))}
-        </div>
+      <div className="room-stage scene" style={{ ["--scene-h" as string]: "260svh" }}>
+        <div className="scene-pin relative px-6 pb-32 md:px-10 lg:h-svh lg:overflow-hidden lg:p-0">
+          <div className="room-aperture relative aspect-[4/5] w-full overflow-hidden md:aspect-[16/10] lg:absolute lg:inset-0 lg:aspect-auto">
+            <GradedImage
+              src={tableImg}
+              alt={room.imageAlt}
+              fill
+              sizes="100vw"
+              placeholder="blur"
+              className="h-full w-full"
+            />
+            <span className="room-shade pointer-events-none absolute inset-0" aria-hidden="true" />
 
-        {/* Phones: the table stands upright, the number above it. */}
-        <div className="room-table relative mx-auto mt-14 max-w-[22rem] md:hidden">
-          <RoomNumber className="mb-8" size="text-[clamp(4rem,20vw,6rem)]" />
-          <p className="room-seg label mb-2 text-center text-gold-light">{conversation.cards[2].label}</p>
-          <Table orientation="portrait" lit={room.number.from} seatR={9} className="mx-auto w-[80%]" />
-          <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3">
-            {room.segments.map((s) => (
-              <li key={s} className="room-seg label text-text-soft">
+            <p className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <span className="sr-only">
+                {room.number.display} {room.numberLabel}
+              </span>
+              <span className="room-count inline-block font-display leading-[0.9] text-text" aria-hidden="true">
+                <span className="count-a inline-block min-w-[2ch] text-right tabular-nums">{FROM}</span>
+                <span className="count-b inline-block">–{TO}</span>
+              </span>
+              <span className="room-unit label mt-6 block text-gold-light" aria-hidden="true">
+                {room.numberLabel}
+              </span>
+            </p>
+
+            {/* Desktop: the four kinds of people sit along the bottom edge, as a ledger. */}
+            <div className="room-ledger absolute inset-x-0 bottom-0 hidden border-t border-hairline lg:block">
+              <ul className={`${container} grid grid-cols-4`}>
+                {room.segments.map((s) => (
+                  <li key={s} className="room-seg label border-l border-hairline px-10 py-8 text-text first:border-l-0 first:pl-0">
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <ul className="mt-10 grid grid-cols-2 border-t border-hairline lg:hidden">
+            {room.segments.map((s, i) => (
+              <li key={s} className={`room-seg label py-5 text-text-soft ${i % 2 ? "pl-5" : "border-r border-hairline"} ${i > 1 ? "border-t border-hairline" : ""}`}>
                 {s}
               </li>
             ))}

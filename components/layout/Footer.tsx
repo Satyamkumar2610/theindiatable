@@ -13,7 +13,7 @@ export function Footer() {
     <footer className="border-t border-hairline bg-secondary">
       <div className={`${container} grid gap-14 py-20 md:grid-cols-[auto_1fr] md:items-center md:gap-20 lg:py-28`}>
         <Seal className="w-32 md:w-44" />
-        <p className="max-w-[26ch] font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-[1.15] text-text">
+        <p className="max-w-[26ch] font-display text-lede text-text">
           {brand.footerLine}
         </p>
       </div>

@@ -7,6 +7,7 @@ import { LOCKUP, LockupMark } from "@/components/motif/LockupMark";
 import { InviteButton } from "@/components/ui/Button";
 import { LinkArrow } from "@/components/ui/LinkArrow";
 import { arrival, brand, stages } from "@/content/site";
+import { SeamVeil } from "@/components/ui/Seam";
 import { canUseWebGL } from "@/lib/motion";
 import { onFirstInteraction, useMotion } from "@/lib/use-motion";
 import { scrollToTarget } from "@/lib/scroll";
@@ -30,8 +31,8 @@ const [LINE1, LINE2] = (() => {
  * [01] The Arrival. The logo is the threshold. On load the lockup assembles:
  * the seat (head), the table (rule), the figure rising, the two T's closing
  * in like doors, then the name. Desktop: scrolling slides the T's apart along
- * the table into two gold pillars, the silk room opens between them and the
- * second half of the line lands.
+ * the table into two gold pillars and the silk room opens between them. The
+ * whole line, the subline and the action are on the first screen from load.
  */
 export function Arrival() {
   const root = useRef<HTMLElement>(null);
@@ -41,14 +42,10 @@ export function Arrival() {
   // The silk room starts on the visitor's first interaction, never competing with first paint.
   useEffect(() => onFirstInteraction(() => canUseWebGL() && setSilk(true)), []);
 
-  useMotion(root, (el, { gsap, SplitText }, c) => {
+  useMotion(root, (el, { gsap }, c) => {
     if (!c.desktop) return;
     const q = gsap.utils.selector(el);
     const svg = el.querySelector(".lockup") as HTMLElement;
-    const line2 = q(".arrival-line2")[0] as HTMLElement;
-    const split = SplitText.create(line2, { type: "words,lines", mask: "lines", aria: "none" });
-    gsap.set(q(".arrival-reveal"), { autoAlpha: 1 });
-
     // Lockup units per CSS pixel, so every move lands at the same place at any size.
     const unit = () => LOCKUP.w / svg.getBoundingClientRect().width;
     const px = (units: number) => () => units / unit();
@@ -62,12 +59,12 @@ export function Arrival() {
 
     const tl = gsap.timeline({
       defaults: { ease: "none", immediateRender: false },
+      // The section is a CSS sticky scene (height reserved from first paint), so nothing jumps when GSAP arrives.
       scrollTrigger: {
         trigger: el,
         start: "top top",
-        end: "+=140%",
-        pin: true,
-        scrub: 1,
+        end: "bottom bottom",
+        scrub: true,
         invalidateOnRefresh: true,
       },
     });
@@ -81,16 +78,12 @@ export function Arrival() {
       .fromTo(q(".lk-tl"), { x: 0, y: 0, scale: 1 }, { x: edge(-1), y: px(toTable), scale: 1.7, transformOrigin: pct(LOCKUP.tlX, LOCKUP.tBase), duration: 0.5, ease: "power2.inOut" }, 0.06)
       .fromTo(q(".lk-tr"), { x: 0, y: 0, scale: 1 }, { x: edge(1), y: px(toTable), scale: 1.7, transformOrigin: pct(LOCKUP.trX, LOCKUP.tBase), duration: 0.5, ease: "power2.inOut" }, 0.06)
       .fromTo(q(".lk-rule"), { scaleX: 1 }, { scaleX: ruleScale, transformOrigin: pct(LOCKUP.rule.x, LOCKUP.rule.y), duration: 0.5, ease: "power2.inOut" }, 0.06)
-      .to(q(".arrival-silk"), { opacity: 0.85, duration: 0.5 }, 0.08)
+      // The silk mounts on first interaction, after this timeline is built: tween a variable it reads, not the canvas.
+      .fromTo(el, { "--silk": 0.45 }, { "--silk": 0.85, duration: 0.5 }, 0.08)
       // The figure steps down to the table, then rises at it.
       .fromTo(q(".lk-fig, .lk-head"), { y: 0 }, { y: px(figToTable), duration: 0.3, ease: "power2.inOut" }, 0.14)
       .to(q(".lk-fig, .lk-head"), { y: px(figToTable - 30), duration: 0.2, ease: "power2.out" }, 0.46)
-      // second beat of the headline
-      .from(split.words, { yPercent: 110, duration: 0.14, stagger: 0.025, ease: "power3.out", immediateRender: true }, 0.56)
-      .fromTo(q(".arrival-after"), { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.12, immediateRender: true }, 0.78)
-      .to({}, { duration: 0.08 });
-
-    return () => split.revert();
+      .to({}, { duration: 0.12 });
   });
 
   const stage = stages[0];
@@ -101,8 +94,10 @@ export function Arrival() {
       id={stage.id}
       data-stage={stage.id}
       aria-labelledby="arrival-title"
-      className="arrival relative isolate flex min-h-svh flex-col items-center overflow-hidden bg-primary"
+      className="arrival scene relative bg-primary"
+      style={{ ["--scene-h" as string]: "190svh" }}
     >
+      <div className="scene-pin relative isolate flex min-h-svh flex-col items-center overflow-hidden lg:h-svh">
       <div className="arrival-room absolute inset-0 -z-10" aria-hidden="true">
         {silk && <Silk className="arrival-silk absolute inset-0 h-full w-full" />}
         <div className="arrival-vignette absolute inset-0" />
@@ -113,10 +108,10 @@ export function Arrival() {
 
         <h1 id="arrival-title" className="arrival-title mt-[6vh] font-display text-hero text-text lg:mt-[5svh]">
           <span className="arrival-line1 block">{LINE1}</span>
-          <span className="arrival-line2 arrival-reveal block">{LINE2}</span>
+          <span className="arrival-line2 block">{LINE2}</span>
         </h1>
 
-        <div className="arrival-after arrival-reveal mt-8 flex flex-col items-center gap-8 lg:mt-[4svh] lg:flex-row lg:gap-14 lg:text-left">
+        <div className="arrival-after mt-8 flex flex-col items-center gap-8 lg:mt-[4svh] lg:flex-row lg:gap-14 lg:text-left">
           <p className="max-w-[44ch] text-text-soft lg:max-w-[40ch]">{arrival.subline}</p>
           <div className="flex flex-col items-center gap-5 sm:flex-row sm:gap-10">
             <InviteButton href={arrival.cta.href}>{arrival.cta.label}</InviteButton>
@@ -138,6 +133,8 @@ export function Arrival() {
         <span className="arrival-cue-dot" />
         <span className="label text-text-soft">{arrival.cue}</span>
       </div>
+      </div>
+      <SeamVeil />
     </section>
   );
 }

@@ -1,5 +1,6 @@
 import { Footer } from "@/components/layout/Footer";
 import { IndexRail } from "@/components/nav/IndexRail";
+import { SectionSeams } from "@/components/providers/SectionSeams";
 import { Nav } from "@/components/nav/Nav";
 import { Arrival } from "@/components/sections/Arrival";
 import { Beyond } from "@/components/sections/Beyond";
@@ -15,6 +16,7 @@ export default function Home() {
     <>
       <Nav />
       <IndexRail />
+      <SectionSeams />
       <main id="main">
         <Arrival />
         <Idea />
