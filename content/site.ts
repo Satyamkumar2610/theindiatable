@@ -86,6 +86,7 @@ export const idea = {
   /** AUDIENCE PIVOT: rewritten from the concept note's "generation" framing. Client to approve. */
   manifesto:
     "The India Table puts the people building India's enterprises in the same room as the people shaping India's policies, giving policymakers a direct window into the ambitions and realities of Indian business, and giving business leaders a deeper understanding of the decisions that will shape the environment in which they build.",
+  /** Not rendered on home: it repeated the manifesto word for word (hierarchy pass, 2026-11-25). Kept for /principles or press use. */
   pullQuote:
     "The idea is simple: put the people building India's enterprises in the same room as the people shaping India's policies.",
   /** The two constituencies. Used as the two sides of the mark in 02. */
@@ -116,6 +117,7 @@ export const distinction = {
       body: "Participants stay connected across Tables, creating a cross-sector community whose relationships and conversations continue well beyond an individual gathering.",
     },
   ],
+  /** Not rendered on home: it repeated the headline's device and cost a screen (hierarchy pass, 2026-11-25). */
   closing: "No stages. No panels. No audience.",
 } as const;
 
@@ -128,6 +130,8 @@ export const room = {
   /** AUDIENCE PIVOT (user's own list: industrialists, business leaders, investors). Client to approve. */
   segments: ["Industrialists", "Business leaders", "Investors", "Founders"],
   link: { label: "How participants are selected", href: "/principles#selection" },
+  /** Illustrative photograph (CC0, see public/images/CREDITS.md); not an India Table gathering. */
+  imageAlt: "A long conference table in a dark room, every chair drawn in, empty.",
 } as const;
 
 export const conversation = {
@@ -136,18 +140,22 @@ export const conversation = {
     {
       label: "One issue",
       line: "Each Table is centred on a defining national opportunity, challenge or priority.",
+      imageAlt: "A fountain pen mid-sentence on a ruled page.",
     },
     {
       label: "Closed-door",
       line: "An invitation-only format designed for openness, candour and substantive exchange.",
+      imageAlt: "A classical hall closed to the street, lit only from a glass ceiling.",
     },
     {
       label: "Senior voices",
       line: "Ministers, policymakers and eminent leaders anchoring each conversation.",
+      imageAlt: "A stone column seen from below, rising to its capital.",
     },
     {
       label: "Conversation",
       line: "No long speeches or panels; the emphasis is on dialogue and exchange.",
+      imageAlt: "Chairs drawn up to a table, facing one another.",
     },
   ],
   /** TODO: confirm with client that the Chatham House Rule applies. */
@@ -160,6 +168,8 @@ export const beyond = {
   headline: "A lasting bridge between enterprise and government.",
   body: "Over time, The India Table can become a structured bridge between government and the leaders building India's economy: an ongoing channel to the people who create jobs, deploy capital and build industries, and a credible network that can contribute to consultations, policy dialogue and international economic exchange.",
   line: "A room India's most serious business leaders genuinely want to be in, because the people around the table matter.",
+  /** Illustrative photograph (CC0, see public/images/CREDITS.md). */
+  imageAlt: "A colonnade of stone arches running on into the light.",
 } as const;
 
 export type Founder = {
@@ -244,6 +254,42 @@ export const principlesPage = {
   chathamHouse: "TODO: Chatham House Rule explanation",
   privacy: "TODO: privacy note",
   conduct: "TODO: conduct note",
+
+  /** Interface copy for /principles. Every fact below is quoted from the sections above. */
+  meta: {
+    title: "Principles",
+    description: "How a Table works: the principles, the format, and what holds it together.",
+  },
+  title: "How a Table works.",
+  standfirst: room.body,
+  contentsLabel: "On this page",
+  chapters: {
+    principles: "The principles",
+    format: "The format",
+    selection: "Selection",
+    chathamHouse: "The Chatham House Rule",
+    conduct: "Conduct",
+    beyond: "Beyond the table",
+    privacy: "Privacy",
+  },
+  /** The format as a spec sheet (concept note, "Format"). */
+  format: [
+    { term: room.number.display, detail: "Participants per Table, selected through a highly curated process." },
+    { term: conversation.cards[1].label, detail: conversation.cards[1].line },
+    { term: conversation.cards[2].label, detail: conversation.cards[2].line },
+    /** AUDIENCE PIVOT: mirrors room.segments. Client to approve. */
+    { term: "Around the table", detail: "Industrialists, business leaders, investors and founders." },
+    { term: conversation.cards[0].label, detail: conversation.cards[0].line },
+    { term: conversation.cards[3].label, detail: conversation.cards[3].line },
+  ],
+} as const;
+
+export const peoplePage = {
+  meta: {
+    title: "The founding team",
+    description: "The founding team behind The India Table.",
+  },
+  indexLabel: "The founders",
 } as const;
 
 export const invitation = {
@@ -251,6 +297,81 @@ export const invitation = {
     "Thank you. Every request is read by the founding team. We will write to you personally.",
   /** The same promise, shown before someone writes (the confirmation copy without "Thank you."). */
   promise: "Every request is read by the founding team. We will write to you personally.",
+} as const;
+
+/** /invitation: the request form. Interface copy only; no facts. */
+export const invitationForm = {
+  meta: {
+    title: "Request an invitation",
+    description: "Participation in The India Table is by invitation. Request a seat, nominate someone, or propose an institutional partnership.",
+  },
+  title: "Request an invitation.",
+  standfirst: engagement.body,
+  stepOf: (n: number, total: number) => `Step ${n} of ${total}`,
+  steps: [
+    { id: "intent", label: "Your request" },
+    { id: "you", label: "About you" },
+    { id: "note", label: "Your note" },
+    { id: "review", label: "Review and send" },
+  ],
+  intentQuestion: "What would you like to do?",
+  intentHelp: {
+    seat: "Be considered for a seat at a Table.",
+    nominate: "Put forward someone who belongs at the table.",
+    partner: "Propose a partnership on behalf of your institution.",
+  },
+  youQuestion: "Tell us who you are.",
+  noteQuestion: {
+    seat: "What would you bring to the table?",
+    nominate: "Who are you nominating?",
+    partner: "What does your institution have in mind?",
+  },
+  reviewQuestion: "Check your request before you send it.",
+  fields: {
+    name: "Full name",
+    email: "Email",
+    organisation: "Organisation",
+    role: "Role",
+    linkedin: "LinkedIn profile",
+    optional: "Optional",
+    nominee: "Nominee",
+    nomineeName: "Their full name",
+    nomineeOrganisation: "Their organisation",
+    nomineeRole: "Their role",
+    note: {
+      seat: "Your note",
+      nominate: "Why they belong at the table",
+      partner: "Your proposal",
+    },
+    noteHint: "A few sentences is enough.",
+    consent: "The India Table may use these details to reply to this request.",
+  },
+  errors: {
+    intent: "Choose what you would like to do.",
+    name: "Enter your full name.",
+    email: "Enter an email address, like name@company.com.",
+    organisation: "Enter your organisation.",
+    role: "Enter your role.",
+    linkedin: "Enter the full address of the profile, starting with https://",
+    nomineeName: "Enter their full name.",
+    nomineeOrganisation: "Enter their organisation.",
+    nomineeRole: "Enter their role.",
+    note: "Write a short note.",
+    tooLong: "This is too long. Shorten it and try again.",
+    consent: "Tick the box so we can reply to you.",
+  },
+  actions: {
+    next: "Continue",
+    back: "Back",
+    edit: "Edit",
+    sending: "Sending your request",
+  },
+  sendFailed: "Your request was not sent. Check your connection and send it again.",
+  /** Shown when the site has no mail settings (RESEND_API_KEY, INVITATION_TO, INVITATION_FROM). */
+  unavailable: "Requests cannot be sent from this site yet. Please try again later.",
+  /** Development only: the request validated but no mail settings are present, so nothing was sent. */
+  devNotSent: "Development: nothing was sent (no mail settings). The request is in the server log.",
+  done: { label: "Return to the table", href: "/" },
 } as const;
 
 export const footer = {

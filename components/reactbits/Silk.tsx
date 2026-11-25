@@ -120,7 +120,9 @@ export default function Silk({ className, active = true }: { className?: string;
       io.disconnect();
       ro.disconnect();
       document.removeEventListener("visibilitychange", onVis);
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      // Free the GPU context only when the canvas is really leaving the page. React's dev-mode
+      // mount/cleanup/mount keeps the same canvas, and getContext() would hand back the dead context.
+      if (!canvas.isConnected) gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
   }, []);
 

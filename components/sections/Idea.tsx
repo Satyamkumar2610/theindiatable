@@ -29,7 +29,7 @@ export function Idea() {
     if (c.desktop) {
       const tl = gsap.timeline({
         defaults: { ease: "none" },
-        scrollTrigger: { trigger: q(".idea-stage")[0], start: "top top", end: "bottom bottom", scrub: 1, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: q(".idea-stage")[0], start: "top top", end: "bottom bottom", scrub: true, invalidateOnRefresh: true },
       });
       tl.fromTo(q(".mp-tl"), { x: () => -apart() }, { x: 0, duration: 0.55, ease: "power2.inOut" }, 0.05)
         .fromTo(q(".mp-tr"), { x: () => apart() }, { x: 0, duration: 0.55, ease: "power2.inOut" }, 0.05)
@@ -63,10 +63,10 @@ export function Idea() {
 
   return (
     <Section ref={root} stage={stage} ground="black">
-      <div className="idea-stage relative lg:h-[230vh]">
-        <div className="flex min-h-svh flex-col justify-center py-28 lg:sticky lg:top-0 lg:h-svh lg:py-0">
+      <div className="idea-stage scene relative" style={{ ["--scene-h" as string]: "200svh" }}>
+        <div className="scene-pin flex min-h-svh flex-col justify-center py-28 lg:h-svh lg:py-0">
           <div className={container}>
-            <RunningHead stage={stage} />
+            <RunningHead stage={stage} className="text-center" />
             <h2 id="idea-title" className="mt-10 text-center font-display text-h2 text-text">
               <span className="block">{L1}</span>
               <span className="idea-l2 block">{L2}</span>
@@ -86,33 +86,27 @@ export function Idea() {
         </div>
       </div>
 
+      {/* The manifesto is the one statement of the idea; the pull quote repeated it word for word, so it is not rendered. */}
       <div className={`${container} pt-16 pb-40 lg:pb-56`}>
-        <p className="idea-manifesto mx-auto max-w-[30ch] font-display text-[clamp(1.6rem,2.7vw,2.5rem)] leading-[1.3] text-text">
-          {idea.manifesto.split(" ").map((w, i) => (
-            <span key={i} className="rw">
-              {w}{" "}
-            </span>
-          ))}
-        </p>
-      </div>
-
-      <div className="paper border-t border-hairline">
-        <figure className={`${container} flex min-h-[90svh] flex-col items-center justify-center py-40 text-center`}>
-          <span className="h-px w-12 bg-gold" aria-hidden="true" />
-          <blockquote className="mt-12 max-w-[22ch] font-display text-[clamp(2.1rem,4.4vw,4rem)] leading-[1.14] text-primary">
-            {idea.pullQuote}
-          </blockquote>
-          <figcaption className="mt-14 flex flex-col items-center gap-4">
-            <span className="stage-label !text-primary-raised">{idea.creditLabel}</span>
-            <span className="flex flex-wrap justify-center gap-x-8 gap-y-2">
+        <div className="mx-auto w-fit">
+          <p className="idea-manifesto max-w-[30ch] font-display text-lede text-text">
+            {idea.manifesto.split(" ").map((w, i) => (
+              <span key={i} className="rw">
+                {w}{" "}
+              </span>
+            ))}
+          </p>
+          <div className="mt-14 flex flex-col gap-4 border-t border-hairline pt-8">
+            <span className="stage-label">{idea.creditLabel}</span>
+            <span className="flex flex-wrap gap-x-8 gap-y-2">
               {people.founders.map((f) => (
-                <a key={f.slug} href="#people" className="text-link label !text-primary hover:!text-primary-raised">
+                <a key={f.slug} href="#people" className="text-link label">
                   {f.name}
                 </a>
               ))}
             </span>
-          </figcaption>
-        </figure>
+          </div>
+        </div>
       </div>
     </Section>
   );

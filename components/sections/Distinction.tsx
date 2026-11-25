@@ -37,7 +37,7 @@ export function Distinction() {
       gsap
         .timeline({
           defaults: { ease: "none" },
-          scrollTrigger: { trigger: q(".dist-stage")[0], start: "top top", end: "bottom bottom", scrub: 1 },
+          scrollTrigger: { trigger: q(".dist-stage")[0], start: "top top", end: "bottom bottom", scrub: true },
         })
         .fromTo(q(".dist-slit"), { scaleX: 0 }, { scaleX: 1, duration: 0.14, ease: "power2.inOut" }, 0.04)
         .to(lines[0], { yPercent: -115, duration: 0.1, ease: "power2.inOut" }, 0.26)
@@ -72,30 +72,19 @@ export function Distinction() {
       stagger: 0.12,
       scrollTrigger: { trigger: q(".principles")[0], start: "top 80%" },
     });
-    gsap.fromTo(
-      q(".close-w"),
-      { opacity: 0.18 },
-      {
-        opacity: 1,
-        stagger: 0.3,
-        ease: "none",
-        immediateRender: false,
-        scrollTrigger: { trigger: q(".dist-close")[0], start: "top bottom", end: "center 45%", scrub: true },
-      },
-    );
   });
 
   return (
     <Section ref={root} stage={stage} ground="green">
-      <div className="dist-stage relative lg:h-[260vh]">
-        <div className="py-32 lg:sticky lg:top-0 lg:flex lg:h-svh lg:items-center lg:py-0">
+      <div className="dist-stage scene relative" style={{ ["--scene-h" as string]: "220svh" }}>
+        <div className="scene-pin py-32 lg:flex lg:h-svh lg:items-center lg:py-0">
           <div className={`${container} grid gap-16 lg:grid-cols-12 lg:items-center lg:gap-10`}>
             <div className="lg:col-span-7">
               <RunningHead stage={stage} />
               <h2 id="distinction-title" className="sr-only">
                 {distinction.headline}
               </h2>
-              <p className="dist-lines mt-10 font-display text-[clamp(2.75rem,5.4vw,5.75rem)] leading-[1.06] text-text lg:whitespace-nowrap" aria-hidden="true">
+              <p className="dist-lines mt-10 font-display text-h2 text-text lg:whitespace-nowrap" aria-hidden="true">
                 {LINES.map((l, i) => (
                   <span key={l} className={`dist-line block ${i < 2 ? "dist-not" : ""}`}>
                     {l}
@@ -131,23 +120,13 @@ export function Distinction() {
                 className="h-full p-10 md:p-14 lg:min-h-[22rem]"
                 style={{ ["--spotlight-card-surface" as string]: "var(--color-text)", ["--spotlight-card-border" as string]: "transparent" }}
               >
-                <h3 className="max-w-[16ch] text-[clamp(1.75rem,2.6vw,2.4rem)] leading-[1.1] text-primary">{p.title}</h3>
+                <h3 className="max-w-[16ch] text-h3 text-primary">{p.title}</h3>
                 <span className="mt-8 block h-px w-10 bg-gold" aria-hidden="true" />
                 <p className="mt-8 max-w-[42ch] text-primary-raised">{p.body}</p>
               </SpotlightCard>
             </li>
           ))}
         </ul>
-      </div>
-
-      <div className={`dist-close ${container} flex min-h-[80svh] items-center justify-center pb-32 text-center`}>
-        <p className="font-display text-[clamp(2.4rem,6vw,5.5rem)] leading-[1.08] text-text">
-          {distinction.closing.split(/(?<=\.)\s/).map((w) => (
-            <span key={w} className="close-w block">
-              {w}
-            </span>
-          ))}
-        </p>
       </div>
     </Section>
   );

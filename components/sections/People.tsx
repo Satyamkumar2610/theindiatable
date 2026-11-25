@@ -1,9 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useLenis } from "lenis/react";
+import { Portrait } from "@/components/people/Portrait";
 import { RunningHead } from "@/components/ui/RunningHead";
 import { Section, container } from "@/components/ui/Section";
 import { people, stages, type Founder } from "@/content/site";
@@ -14,35 +14,6 @@ const TiltedCard = dynamic(() => import("@/components/reactbits/TiltedCard"), {
   ssr: false,
   loading: () => <div className="h-full w-full bg-primary" />,
 });
-
-const initials = (name: string) =>
-  name
-    .split(" ")
-    .map((p) => p[0])
-    .join("");
-
-/** The portrait slot: the supplied photograph, or the founder's initials until one arrives. */
-function Portrait({ f, big = false }: { f: Founder; big?: boolean }) {
-  if (f.portrait) {
-    return (
-      <Image
-        src={f.portrait}
-        alt={`Portrait of ${f.name}`}
-        fill
-        sizes={big ? "40vw" : "(min-width: 768px) 30vw, 90vw"}
-        className="object-cover grayscale"
-      />
-    );
-  }
-  return (
-    <span className="portrait-slot absolute inset-0 flex items-end justify-between p-6 md:p-8" aria-hidden="true">
-      <span className={`font-display leading-none text-gold-light ${big ? "text-[clamp(5rem,10vw,9rem)]" : "text-[clamp(4rem,7vw,6.5rem)]"}`}>
-        {initials(f.name)}
-      </span>
-      <span className="mb-2 h-2.5 w-2.5 rounded-full bg-gold-light" />
-    </span>
-  );
-}
 
 /**
  * [07] The People Behind It. Three place cards on paper-white. Each card tilts
@@ -118,7 +89,7 @@ export function People() {
                   <Portrait f={f} />
                 </TiltedCard>
               </div>
-              <h3 className="mt-8 text-[clamp(1.75rem,2.4vw,2.25rem)] leading-[1.1] text-primary">{f.name}</h3>
+              <h3 className="mt-8 text-h3 text-primary">{f.name}</h3>
               <p className="mt-3 max-w-[32ch] text-primary-raised">{f.oneLiner}</p>
               <button type="button" onClick={() => setOpen(f)} className="text-link label mt-6 !text-primary hover:!text-primary-raised">
                 {people.readBio}
